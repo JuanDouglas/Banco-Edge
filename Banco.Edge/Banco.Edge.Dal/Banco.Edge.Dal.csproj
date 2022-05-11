@@ -7,15 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Clientes\Procedures\InsCliente.sql" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Clientes\Procedures\InsCliente.sql" />
+    <Compile Remove="Clientes\Procedures\**" />
+    <EmbeddedResource Remove="Clientes\Procedures\**" />
+    <None Remove="Clientes\Procedures\**" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Banco.Edge.Dml\Banco.Edge.Dml.csproj" />
   </ItemGroup>
 
   <ItemGroup>

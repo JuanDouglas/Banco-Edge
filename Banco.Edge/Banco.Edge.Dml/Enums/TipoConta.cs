@@ -1,4 +1,4 @@
-﻿namespace Banco.Edge.Bll.Dml.Enums;
+﻿namespace Banco.Edge.Dml.Enums;
 public enum TipoConta : byte
 {
     Corrente = 1,

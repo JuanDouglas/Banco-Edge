@@ -1,9 +1,7 @@
-﻿using Banco.Edge.Dal.Resources;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using System.Data.SqlClient;
 
-namespace Banco.Edge.Bll;
+namespace Banco.Edge.Dal;
 public abstract class DaoBase
 {
     private protected readonly SqlConnection conn;
@@ -12,7 +10,7 @@ public abstract class DaoBase
     {
         conn = new SqlConnection(Resources.ConnectionString);
     }
-    private protected async Task<DataSet> ExecutarCAsync(string nomeProcedure, List<SqlParameter> parametros)
+    private protected async Task<DataSet> ExecutarAsync(string nomeProcedure, List<SqlParameter> parametros, bool transaction = false)
     {
         using (conn)
         {
@@ -24,22 +22,44 @@ public abstract class DaoBase
             comando.CommandType = CommandType.StoredProcedure;
             comando.CommandText = nomeProcedure;
             comando.Connection = conn;
+            if (transaction)
+                comando.Transaction = conn.BeginTransaction();
 
             SqlDataAdapter adapter = new(comando);
             DataSet dbSet = new();
 
             try
             {
-                await Task.Run(()=> adapter.Fill(dbSet));
-                await comando.Transaction.CommitAsync();
+                await Task.Run(() => adapter.Fill(dbSet));
+
+                if (transaction)
+                    await comando.Transaction.CommitAsync();
             }
             catch (Exception)
             {
-                await comando.Transaction.RollbackAsync();
+                if (transaction)
+                    await comando.Transaction.RollbackAsync();
+
                 throw;
             }
 
             return dbSet;
         }
+    }
+
+    private protected DataRow[] DataTableToRows(DataSet ds)
+    {
+        List<DataRow> rows = new();
+
+        foreach (DataTable dt in ds.Tables)
+        {
+            DataRow[] dataRows = new DataRow[dt.Rows.Count];
+
+            dt.Rows.CopyTo(dataRows, 0);
+
+            rows.AddRange(dataRows);
+        }
+
+        return rows.ToArray();
     }
 }

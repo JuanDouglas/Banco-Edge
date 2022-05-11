@@ -1,5 +1,6 @@
-﻿using Banco.Edge.Bll.Dml;
-using Banco.Edge.Bll.Dml.Enums;
+﻿using Banco.Edge.Dml;
+using Banco.Edge.Dml.Enums;
+using Banco.Edge.Dal.Clientes;
 
 namespace Banco.Edge.Bll;
 
@@ -15,8 +16,17 @@ public class BoCliente
     {
     }
 
-    public static int Cadastro(Cliente cliente)
+    public static async Task<int> CadastroAsync(Cliente cliente)
     {
+        DaoCliente dao = new();
 
+        Cliente? busca = await dao.ExisteAsync(cliente.Email, cliente.CpfOuCnpj);
+
+        if (busca != null)
+            throw new Exception(busca.Email == cliente.Email ? "Email em uso" : "Cpf ou CNpj esta em Uso");
+
+        int id = await dao.InserirCliente(cliente.Nome, cliente.Email, cliente.CpfOuCnpj);
+
+        return id;
     }
 }

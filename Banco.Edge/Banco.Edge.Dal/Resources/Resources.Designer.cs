@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Banco.Edge.Dal.Resources {
+namespace Banco.Edge.Dal {
     using System;
     
     

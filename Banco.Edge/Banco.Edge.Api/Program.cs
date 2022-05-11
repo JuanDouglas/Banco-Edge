@@ -10,7 +10,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
-DaoBase.ConnectionString = app.Configuration.GetConnectionString("SqlData");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

@@ -1,6 +1,6 @@
-﻿using Banco.Edge.Bll.Dml.Enums;
+﻿using Banco.Edge.Dml.Enums;
 
-namespace Banco.Edge.Bll.Dml;
+namespace Banco.Edge.Dml;
 
 public class Conta 
 {
