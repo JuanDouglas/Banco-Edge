@@ -1,23 +1,22 @@
-﻿using Banco.Edge.Dml;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Banco.Edge.Bll.Dml;
+using Banco.Edge.Bll.Dml.Enums;
 
-namespace Banco.Edge.Bll
+namespace Banco.Edge.Bll;
+
+public class BoCliente
 {
-    public class BoCliente
+    public Cliente Cliente { get; set; }
+    public BoCliente(Cliente cliente)
     {
-        public Cliente Cliente { get; set; }
-        public BoCliente(Cliente cliente)
-        {
-            Cliente = cliente;
-        }
+        Cliente = cliente;
+    }
 
-        public static int Inserir()
-        {
-            throw new NotImplementedException();
-        }
+    public void CriarConta(TipoConta tipo)
+    {
+    }
+
+    public static int Cadastro(Cliente cliente)
+    {
+
     }
 }

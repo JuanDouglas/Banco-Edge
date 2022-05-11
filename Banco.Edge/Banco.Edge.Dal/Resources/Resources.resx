@@ -120,4 +120,7 @@
   <data name="ConnectionString" xml:space="preserve">
     <value>Server=.\SQLEXPRESS;Database=Banco Edge;Trusted_Connection=true;</value>
   </data>
+  <data name="String1" xml:space="preserve">
+    <value>aaaa {0}</value>
+  </data>
 </root>

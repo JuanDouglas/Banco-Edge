@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Banco.Edge.Bll.Clientes
+namespace Banco.Edge.Dal.Contas
 {
-    public class DaoClientes : DaoBase
+    internal class DaoConta
     {
     }
 }

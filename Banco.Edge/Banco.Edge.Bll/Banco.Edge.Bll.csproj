@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Banco.Edge.Dml\Banco.Edge.Dml.csproj" />
+    <Folder Include="Bml\" />
   </ItemGroup>
 
 </Project>
