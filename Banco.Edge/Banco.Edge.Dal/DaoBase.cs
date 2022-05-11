@@ -12,7 +12,7 @@ public abstract class DaoBase
     {
         conn = new SqlConnection(Resources.ConnectionString);
     }
-    private protected async Task<DataSet> ExecutarAsync(string nomeProcedure, List<SqlParameter> parametros)
+    private protected async Task<DataSet> ExecutarCAsync(string nomeProcedure, List<SqlParameter> parametros)
     {
         using (conn)
         {
@@ -24,7 +24,6 @@ public abstract class DaoBase
             comando.CommandType = CommandType.StoredProcedure;
             comando.CommandText = nomeProcedure;
             comando.Connection = conn;
-            comando.Transaction = conn.BeginTransaction();
 
             SqlDataAdapter adapter = new(comando);
             DataSet dbSet = new();
@@ -32,10 +31,12 @@ public abstract class DaoBase
             try
             {
                 await Task.Run(()=> adapter.Fill(dbSet));
+                await comando.Transaction.CommitAsync();
             }
             catch (Exception)
             {
-                comando.Transaction.Rollback();
+                await comando.Transaction.RollbackAsync();
+                throw;
             }
 
             return dbSet;
