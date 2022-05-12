@@ -23,12 +23,12 @@ public sealed class DaoCliente : DaoBase
     {
         List<SqlParameter> parameters = new()
         {
-            new SqlParameter("Email", email),
-            new SqlParameter("Nome", nome),
-            new SqlParameter("CpfOrCnpj", cpfOrCnpj)
+            new SqlParameter(nameof(Cliente.Email), email),
+            new SqlParameter(nameof(Cliente.Nome), nome),
+            new SqlParameter(nameof(Cliente.CpfOuCnpj), cpfOrCnpj)
         };
 
-        DataSet dbSet = await ExecutarAsync("InsereCliente", parameters, true);
+        DataSet dbSet = await ExecutarAsync("InserirCliente", parameters, true);
         DataRowCollection rows = dbSet.Tables[0].Rows;
 
         int id = -1;
@@ -73,8 +73,9 @@ public sealed class DaoCliente : DaoBase
             string nome = row.Field<string>(nameof(Cliente.Nome)) ?? string.Empty;
             string email = row.Field<string>(nameof(Cliente.Email)) ?? string.Empty;
             string cpfOuCnpj = row.Field<string>(nameof(Cliente.CpfOuCnpj)) ?? "00000000000";
+            string telefone = row.Field<string>(nameof(Cliente.Telefone)) ?? "+00 (00) 00000-0000";
 
-            clientes[i] = new(id, nome, email, cpfOuCnpj);
+            clientes[i] = new(id, nome, telefone, email, cpfOuCnpj);
         }
 
         return clientes;

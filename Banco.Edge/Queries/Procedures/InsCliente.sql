@@ -1,12 +1,22 @@
 ﻿USE [Banco Edge];
 GO
 
-CREATE PROC InsereCliente
+CREATE PROC InserirCliente
 @Nome VARCHAR(100),
 @Email VARCHAR(500),
-@CpfOrCnpj VARCHAR(14)
+@Telefone VARCHAR(15),
+@CpfOuCnpj VARCHAR(14)
 AS
 BEGIN
-	INSERT INTO [Cliente]([Nome],[Email],[CpfOrCnpj]) 
-	VALUES (@Nome,@Email,@CpfOrCnpj)
+	DECLARE @Id INTEGER;
+
+	INSERT INTO [Cliente]([Nome], [Telefone], [Email], [CpfOuCnpj]) 
+	VALUES (@Nome, @Telefone, @Email, @CpfOuCnpj)
+
+	SET @Id = SCOPE_IDENTITY();
+	
+	INSERT INTO [Conta]([Dono], [Criacao], [Tipo])
+	VALUES (@Id, GETDATE(), 1)
+	
+	SELECT @Id;
 END

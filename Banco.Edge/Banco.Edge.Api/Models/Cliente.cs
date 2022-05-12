@@ -11,10 +11,16 @@ public class Cliente
     [EmailAddress]
     [StringLength(500, MinimumLength = 7)]
     public string Email { get; set; }
+
+    [Phone]
+    [Required]
+    [StringLength(15, MinimumLength = 8)]
+    public string Telefone { get; set; }
+
     [Required]
     [CpfOrCnpj]
     public string CpfOuCnpj { get; set; }
 
     public Dml.Cliente ToDml()
-        => new(Id, Nome, Email, CpfOuCnpj);
+        => new(Id, Nome, Telefone, Email, CpfOuCnpj);
 }

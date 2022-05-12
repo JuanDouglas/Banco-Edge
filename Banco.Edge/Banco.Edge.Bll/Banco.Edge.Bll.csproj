@@ -13,10 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Exceptions\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Banco.Edge.Dal\Banco.Edge.Dal.csproj" />
   </ItemGroup>
 

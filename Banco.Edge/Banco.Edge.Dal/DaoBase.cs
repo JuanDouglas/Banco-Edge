@@ -12,39 +12,39 @@ public abstract class DaoBase
     }
     private protected async Task<DataSet> ExecutarAsync(string nomeProcedure, List<SqlParameter> parametros, bool transaction = false)
     {
-        using (conn)
+        SqlCommand comando = new();
+
+        foreach (var item in parametros)
+            comando.Parameters.Add(item);
+
+        await conn.OpenAsync();
+
+        comando.CommandType = CommandType.StoredProcedure;
+        comando.CommandText = nomeProcedure;
+        comando.Connection = conn;
+        if (transaction)
+            comando.Transaction = conn.BeginTransaction();
+
+        SqlDataAdapter adapter = new(comando);
+        DataSet dbSet = new();
+
+        try
         {
-            SqlCommand comando = new();
+            await Task.Run(() => adapter.Fill(dbSet));
 
-            foreach (var item in parametros)
-                comando.Parameters.Add(item);
-
-            comando.CommandType = CommandType.StoredProcedure;
-            comando.CommandText = nomeProcedure;
-            comando.Connection = conn;
             if (transaction)
-                comando.Transaction = conn.BeginTransaction();
-
-            SqlDataAdapter adapter = new(comando);
-            DataSet dbSet = new();
-
-            try
-            {
-                await Task.Run(() => adapter.Fill(dbSet));
-
-                if (transaction)
-                    await comando.Transaction.CommitAsync();
-            }
-            catch (Exception)
-            {
-                if (transaction)
-                    await comando.Transaction.RollbackAsync();
-
-                throw;
-            }
-
-            return dbSet;
+                await comando.Transaction.CommitAsync();
         }
+        catch (Exception)
+        {
+            if (transaction)
+                await comando.Transaction.RollbackAsync();
+
+            throw;
+        }
+
+        await conn.CloseAsync();
+        return dbSet;
     }
 
     private protected DataRow[] DataTableToRows(DataSet ds)
