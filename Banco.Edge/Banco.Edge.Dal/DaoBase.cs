@@ -2,13 +2,14 @@
 using System.Data.SqlClient;
 
 namespace Banco.Edge.Dal;
-public abstract class DaoBase
+public abstract class DaoBase : IDisposable
 {
     private protected readonly SqlConnection conn;
 
     public DaoBase()
     {
         conn = new SqlConnection(Resources.ConnectionString);
+        conn.Open();
     }
     private protected async Task<DataSet> ExecutarAsync(string nomeProcedure, List<SqlParameter> parametros, bool transaction = false)
     {
@@ -16,8 +17,6 @@ public abstract class DaoBase
 
         foreach (var item in parametros)
             comando.Parameters.Add(item);
-
-        await conn.OpenAsync();
 
         comando.CommandType = CommandType.StoredProcedure;
         comando.CommandText = nomeProcedure;
@@ -43,10 +42,8 @@ public abstract class DaoBase
             throw;
         }
 
-        await conn.CloseAsync();
         return dbSet;
     }
-
     private protected DataRow[] DataTableToRows(DataSet ds)
     {
         List<DataRow> rows = new();
@@ -61,5 +58,14 @@ public abstract class DaoBase
         }
 
         return rows.ToArray();
+    }
+
+    public void Dispose()
+    {
+        if (conn.State != ConnectionState.Closed)
+            conn.Close();
+
+        SqlConnection
+            .ClearPool(conn);
     }
 }

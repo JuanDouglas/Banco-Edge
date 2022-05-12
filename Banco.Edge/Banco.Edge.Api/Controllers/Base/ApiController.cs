@@ -6,4 +6,5 @@ namespace Banco.Edge.Api.Controllers.Base;
 [Route("api/[controller]")]
 public class ApiController : ControllerBase
 {
+    
 }

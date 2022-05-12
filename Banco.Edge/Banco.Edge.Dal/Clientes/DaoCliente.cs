@@ -19,14 +19,14 @@ public sealed class DaoCliente : DaoBase
         return clientes.Length < 1 ? null : clientes[0];
     }
 
-    public async Task<int> InserirCliente(string nome, string telefone, string email, string cpfOrCnpj)
+    public async Task<int> InserirCliente(Cliente cliente)
     {
         List<SqlParameter> parameters = new()
         {
-            new SqlParameter(nameof(Cliente.Email), email),
-            new SqlParameter(nameof(Cliente.Nome), nome),
-            new SqlParameter(nameof(Cliente.Telefone), telefone),
-            new SqlParameter(nameof(Cliente.CpfOuCnpj), cpfOrCnpj)
+            new SqlParameter(nameof(Cliente.Nome), cliente.Nome),
+            new SqlParameter(nameof(Cliente.Email), cliente.Email),
+            new SqlParameter(nameof(Cliente.Telefone), cliente.Telefone),
+            new SqlParameter(nameof(Cliente.CpfOuCnpj), cliente.CpfOuCnpj)
         };
 
         DataSet dbSet = await ExecutarAsync("InserirCliente", parameters, true);
