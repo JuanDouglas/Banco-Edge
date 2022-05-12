@@ -27,7 +27,7 @@ public class BoCliente
         if (busca != null)
             throw new InUseException(busca.Email == cliente.Email ? nameof(cliente.Email) : nameof(cliente.CpfOuCnpj));
 
-        int id = await dao.InserirCliente(cliente.Nome, cliente.Email, cliente.CpfOuCnpj);
+        int id = await dao.InserirCliente(cliente.Nome, cliente.Telefone, cliente.Email, cliente.CpfOuCnpj);
 
         return id;
     }
