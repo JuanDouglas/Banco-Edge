@@ -18,7 +18,7 @@ public class ClientesController : ApiController
         {
             cliente.Id = await BoCliente.CadastroAsync(cliente.ToDml());
         }
-        catch (InUseException ex)
+        catch (EmUsoException ex)
         {
             ModelState.AddModelError(ex.Field, ex.Message);
             return BadRequest(ModelState);
@@ -27,8 +27,15 @@ public class ClientesController : ApiController
         return Ok(cliente);
     }
 
+    [HttpPost]
+    [Route("Atualizar")]
+    public async Task<IActionResult> AtualizarAsync(Cliente cliente)
+    {
+        throw new NotImplementedException();
+    }
+
     [HttpDelete]
-    [Route("Delete")]
+    [Route("Excluir")]
     public async Task<IActionResult> DeleteAsync(int id)
     {
         throw new NotImplementedException();

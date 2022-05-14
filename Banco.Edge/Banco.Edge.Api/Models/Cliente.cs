@@ -10,6 +10,11 @@ public class Cliente
     public string Nome { get; set; }
 
     [Required]
+    [Password]
+    [StringLength(20, MinimumLength = 3)]
+    public string Senha { get; set; }
+
+    [Required]
     [EmailAddress]
     [StringLength(500, MinimumLength = 7)]
     public string Email { get; set; }
@@ -24,5 +29,8 @@ public class Cliente
     public string CpfOuCnpj { get; set; }
 
     public Dml.Cliente ToDml()
-        => new(Id, Nome, Telefone, Email, CpfOuCnpj);
+        => new(Id, Nome, Telefone, Email, CpfOuCnpj)
+        {
+            Senha = Senha
+        };
 }
