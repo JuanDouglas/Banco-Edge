@@ -1,4 +1,5 @@
 using Banco.Edge.Bll;
+using Nexus.Tools.Validations.Middlewares.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseAuthentication(BoLogin.GetAuthenticationAsync);
 
 app.MapControllers();
 

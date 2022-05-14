@@ -3,18 +3,26 @@ using Banco.Edge.Dml.Enums;
 using Banco.Edge.Dal.Clientes;
 using Banco.Edge.Bll.Exceptions;
 using System.Data.SqlClient;
+using Banco.Edge.Bll.Base;
 
 namespace Banco.Edge.Bll;
 
-public class BoCliente
+public class BoCliente : BoBase
 {
     public Cliente Cliente { get; set; }
+    private protected DaoCliente DaoCliente { get; set; }
     public BoCliente(Cliente cliente) : base()
     {
         Cliente = cliente;
+        DaoCliente = new();
     }
 
     public void CriarConta(TipoConta tipo)
+    {
+
+    }
+
+    public static async Task AtualizarAsync(Cliente cliente)
     {
 
     }
@@ -26,10 +34,19 @@ public class BoCliente
         Cliente? busca = await dao.ExisteAsync(cliente.Email, cliente.CpfOuCnpj);
 
         if (busca != null)
-            throw new InUseException(busca.Email == cliente.Email ? nameof(cliente.Email) : nameof(cliente.CpfOuCnpj));
+            throw new EmUsoException(busca.Email == cliente.Email ? nameof(cliente.Email) : nameof(cliente.CpfOuCnpj));
 
         int id = await dao.InserirCliente(cliente);
 
         return id;
+    }
+
+    public static async Task<Cliente?> BuscarAsync(string email)
+    {
+        DaoCliente dao = new();
+
+        Cliente? cliente = await dao.ExisteAsync(email, null, true);
+
+        return cliente;
     }
 }

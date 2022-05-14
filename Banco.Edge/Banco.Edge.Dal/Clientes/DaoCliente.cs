@@ -6,15 +6,13 @@ namespace Banco.Edge.Dal.Clientes;
 
 public sealed class DaoCliente : DaoBase
 {
-    public async Task<Cliente?> ExisteAsync(string email, string cpfOuCnpj)
+    public async Task<Cliente?> ExisteAsync(string? email, string? cpfOuCnpj, bool obterSenha = false)
     {
-        if (string.IsNullOrEmpty(cpfOuCnpj))
-            throw new ArgumentNullException(nameof(cpfOuCnpj));
+        if (string.IsNullOrEmpty(cpfOuCnpj) &&
+            string.IsNullOrEmpty(email))
+            throw new ArgumentNullException(nameof(cpfOuCnpj), "Ao menos um parametro deve conter valor!");
 
-        if (string.IsNullOrEmpty(email))
-            throw new ArgumentNullException(email);
-
-        Cliente[] clientes = await ExecutarBuscaAsync(email: email, cpfOuCnpj: cpfOuCnpj);
+        Cliente[] clientes = await ExecutarBuscaAsync(email: email, cpfOuCnpj: cpfOuCnpj, obterSenha: obterSenha);
 
         return clientes.Length < 1 ? null : clientes[0];
     }
@@ -23,13 +21,14 @@ public sealed class DaoCliente : DaoBase
     {
         List<SqlParameter> parameters = new()
         {
-            new SqlParameter(nameof(Cliente.Nome), cliente.Nome),
             new SqlParameter(nameof(Cliente.Email), cliente.Email),
+            new SqlParameter(nameof(Cliente.Nome), cliente.Nome),
+            new SqlParameter(nameof(Cliente.Senha), cliente.Senha),
             new SqlParameter(nameof(Cliente.Telefone), cliente.Telefone),
             new SqlParameter(nameof(Cliente.CpfOuCnpj), cliente.CpfOuCnpj)
         };
 
-        DataSet dbSet = await ExecutarAsync("InserirCliente", parameters, true);
+        DataSet dbSet = await ExecuteQueryAsync("InserirCliente", parameters, true);
         DataRowCollection rows = dbSet.Tables[0].Rows;
 
         int id = -1;
@@ -45,24 +44,25 @@ public sealed class DaoCliente : DaoBase
         string? email = null,
         string? cpfOuCnpj = null,
         int take = 1,
-        int skip = 0)
+        int skip = 0,
+        bool obterSenha = false)
     {
         List<SqlParameter> parameters = new()
         {
             new("Skip", skip),
             new("Take", take),
-            new("Email", email),
-            new("CpfOuCnpj", cpfOuCnpj),
-            new("Id", id)
+            new(nameof(Cliente.Id), id),
+            new(nameof(Cliente.Email), email),
+            new(nameof(Cliente.CpfOuCnpj), cpfOuCnpj)
         };
 
-        DataSet ds = await ExecutarAsync("BuscaCliente", parameters);
+        DataSet ds = await ExecuteQueryAsync("BuscaCliente", parameters);
 
         DataRow[] rows = DataTableToRows(ds);
 
-        return Converter(rows);
+        return Converter(rows, obterSenha);
     }
-    private Cliente[] Converter(DataRow[] rows)
+    private Cliente[] Converter(DataRow[] rows, bool obterSenha)
     {
         Cliente[] clientes = new Cliente[rows.Length];
 
@@ -76,7 +76,14 @@ public sealed class DaoCliente : DaoBase
             string cpfOuCnpj = row.Field<string>(nameof(Cliente.CpfOuCnpj)) ?? "00000000000";
             string telefone = row.Field<string>(nameof(Cliente.Telefone)) ?? "+00 (00) 00000-0000";
 
-            clientes[i] = new(id, nome, telefone, email, cpfOuCnpj);
+            if (!obterSenha)
+            {
+                clientes[i] = new(id, nome, telefone, email, cpfOuCnpj);
+                break;
+            }
+
+            string senha = row.Field<string>(nameof(Cliente.Senha)) ?? string.Empty;
+            clientes[i] = new(id, nome, telefone, email, cpfOuCnpj, senha);
         }
 
         return clientes;

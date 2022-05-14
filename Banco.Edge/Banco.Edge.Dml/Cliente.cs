@@ -1,9 +1,19 @@
 ﻿namespace Banco.Edge.Dml;
 public class Cliente
 {
+    private const int workFactor = 11;
     public int Id { get; set; }
     public string Nome { get; set; }
     public string Email { get; set; }
+    public string Senha
+    {
+        get => _senha;
+        set
+        {
+            _senha = BCrypt.Net.BCrypt.HashPassword(value, workFactor);
+        }
+    }
+    private string _senha;
     public string Telefone { get; set; }
     public string CpfOuCnpj
     {
@@ -25,9 +35,9 @@ public class Cliente
         CpfOuCnpj = cpfOuCnpj ?? throw new ArgumentNullException(nameof(cpfOuCnpj));
     }
 
-    private Cliente(int id, string name, string telefone, string email, string cpfOuCnpj, List<Conta>? contas)
+    public Cliente(int id, string name, string telefone, string email, string cpfOuCnpj, string senha)
         : this(id, name, telefone, email, cpfOuCnpj)
     {
-        Contas = contas;
+        _senha = senha ?? throw new ArgumentNullException(nameof(senha));   
     }
 }

@@ -5,13 +5,14 @@ CREATE PROC InserirCliente
 @Nome VARCHAR(100),
 @Email VARCHAR(500),
 @Telefone VARCHAR(15),
-@CpfOuCnpj VARCHAR(14)
+@CpfOuCnpj VARCHAR(14),
+@Senha VARCHAR(90)
 AS
 BEGIN
 	DECLARE @Id INTEGER;
 
-	INSERT INTO [Cliente]([Nome], [Telefone], [Email], [CpfOuCnpj]) 
-	VALUES (@Nome, @Telefone, @Email, @CpfOuCnpj)
+	INSERT INTO [Cliente]([Nome], [Telefone], [Email], [CpfOuCnpj], [Senha]) 
+	VALUES (@Nome, @Telefone, @Email, @CpfOuCnpj, @Senha)
 
 	SET @Id = SCOPE_IDENTITY();
 	

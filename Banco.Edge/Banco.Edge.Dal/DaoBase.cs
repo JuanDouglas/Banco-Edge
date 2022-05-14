@@ -11,7 +11,7 @@ public abstract class DaoBase : IDisposable
         conn = new SqlConnection(Resources.ConnectionString);
         conn.Open();
     }
-    private protected async Task<DataSet> ExecutarAsync(string nomeProcedure, List<SqlParameter> parametros, bool transaction = false)
+    private protected async Task<DataSet> ExecuteQueryAsync(string nomeProcedure, List<SqlParameter> parametros, bool transaction = false)
     {
         SqlCommand comando = new();
 
@@ -43,6 +43,24 @@ public abstract class DaoBase : IDisposable
         }
 
         return dbSet;
+    }
+    private protected async Task ExecuteNonQueryAsync(string nomeProcedure, List<SqlParameter> parametros, bool transaction = false)
+    {
+        SqlCommand comando = new();
+
+        foreach (var item in parametros)
+            comando.Parameters.Add(item);
+
+        await conn.OpenAsync();
+
+        comando.CommandType = CommandType.StoredProcedure;
+        comando.CommandText = nomeProcedure;
+        comando.Connection = conn;
+
+        if (transaction)
+            comando.Transaction = conn.BeginTransaction();
+
+        await comando.ExecuteNonQueryAsync();
     }
     private protected DataRow[] DataTableToRows(DataSet ds)
     {
