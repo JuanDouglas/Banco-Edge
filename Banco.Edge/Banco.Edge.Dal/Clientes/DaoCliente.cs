@@ -6,13 +6,13 @@ namespace Banco.Edge.Dal.Clientes;
 
 public sealed class DaoCliente : DaoBase
 {
-    public async Task<Cliente?> ExisteAsync(string? email, string? cpfOuCnpj, bool obterSenha = false)
+    public async Task<Cliente?> ExisteAsync(string? email, string? cpfOuCnpj, bool ocultarSensiveis = true)
     {
         if (string.IsNullOrEmpty(cpfOuCnpj) &&
             string.IsNullOrEmpty(email))
             throw new ArgumentNullException(nameof(cpfOuCnpj), "Ao menos um parametro deve conter valor!");
 
-        Cliente[] clientes = await ExecutarBuscaAsync(email: email, cpfOuCnpj: cpfOuCnpj, obterSenha: obterSenha);
+        Cliente[] clientes = await ExecutarBuscaAsync(email: email, cpfOuCnpj: cpfOuCnpj, ocultarSensiveis: ocultarSensiveis);
 
         return clientes.Length < 1 ? null : clientes[0];
     }
@@ -21,9 +21,10 @@ public sealed class DaoCliente : DaoBase
     {
         List<SqlParameter> parameters = new()
         {
-            new SqlParameter(nameof(Cliente.Email), cliente.Email),
             new SqlParameter(nameof(Cliente.Nome), cliente.Nome),
+            new SqlParameter(nameof(Cliente.Email), cliente.Email),
             new SqlParameter(nameof(Cliente.Senha), cliente.Senha),
+            new SqlParameter(nameof(Cliente.Chave), cliente.Chave),
             new SqlParameter(nameof(Cliente.Telefone), cliente.Telefone),
             new SqlParameter(nameof(Cliente.CpfOuCnpj), cliente.CpfOuCnpj)
         };
@@ -45,7 +46,7 @@ public sealed class DaoCliente : DaoBase
         string? cpfOuCnpj = null,
         int take = 1,
         int skip = 0,
-        bool obterSenha = false)
+        bool ocultarSensiveis = true)
     {
         List<SqlParameter> parameters = new()
         {
@@ -60,9 +61,9 @@ public sealed class DaoCliente : DaoBase
 
         DataRow[] rows = DataTableToRows(ds);
 
-        return Converter(rows, obterSenha);
+        return Converter(rows, ocultarSensiveis);
     }
-    private Cliente[] Converter(DataRow[] rows, bool obterSenha)
+    private Cliente[] Converter(DataRow[] rows, bool ocultarSensiveis)
     {
         Cliente[] clientes = new Cliente[rows.Length];
 
@@ -75,15 +76,10 @@ public sealed class DaoCliente : DaoBase
             string email = row.Field<string>(nameof(Cliente.Email)) ?? string.Empty;
             string cpfOuCnpj = row.Field<string>(nameof(Cliente.CpfOuCnpj)) ?? "00000000000";
             string telefone = row.Field<string>(nameof(Cliente.Telefone)) ?? "+00 (00) 00000-0000";
-
-            if (!obterSenha)
-            {
-                clientes[i] = new(id, nome, telefone, email, cpfOuCnpj);
-                break;
-            }
-
+            string chave = row.Field<string>(nameof(Cliente.Chave)) ?? string.Empty;
             string senha = row.Field<string>(nameof(Cliente.Senha)) ?? string.Empty;
-            clientes[i] = new(id, nome, telefone, email, cpfOuCnpj, senha);
+
+            clientes[i] = new(id, nome, telefone, email, cpfOuCnpj, senha, chave, ocultarSensiveis);
         }
 
         return clientes;

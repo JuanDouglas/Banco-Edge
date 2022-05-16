@@ -41,11 +41,11 @@ public class BoCliente : BoBase
         return id;
     }
 
-    public static async Task<Cliente?> BuscarAsync(string email)
+    public static async Task<Cliente?> BuscarAsync(string email, bool ocultarSensiveis = true)
     {
-        DaoCliente dao = new();
+        using DaoCliente dao = new();
 
-        Cliente? cliente = await dao.ExisteAsync(email, null, true);
+        Cliente? cliente = await dao.ExisteAsync(email, null, ocultarSensiveis);
 
         return cliente;
     }

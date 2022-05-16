@@ -9,21 +9,44 @@ using System.Net;
 namespace Banco.Edge.Bll;
 public class BoLogin : BoBase
 {
+    DaoLogin dao = new();
     public async Task<Login> LoginAsync(Cliente cliente, string senha, IPAddress adress)
     {
         if (!BCrypt.Net.BCrypt.Verify(senha, cliente.Senha))
             throw new SenhaInvalidaException();
 
         Login login = new(GerarToken(96), adress.GetAddressBytes(), cliente.Id);
-        DaoLogin dao = new();
 
-        await dao.InsertLoginAsync(login);
+        using (dao)
+        {
+            await dao.InsertLoginAsync(login);
+        }
 
         return login;
     }
 
     public static async Task<AuthenticationMidddleware.AuthenticationResult> GetAuthenticationAsync(HttpContext ctx)
     {
+        bool isValid = false;
+        bool isAuthenticated = false;
+
+        dynamic header = ctx.Request.Headers["Authorization"].ToString();
+        header = header.Split(' ');
+
+        if ((int)header.Length < 2)
+            return new(isValid, isAuthenticated);
+
+        header = header[1].Split('.');
+
+        if ((int)header.Length < 2)
+            return new(isValid, isAuthenticated);
+
+        if (string.IsNullOrEmpty((string)header))
+            return new(isValid, isAuthenticated);
+
+        using DaoLogin dao = new();
+
+        await dao.BuscarLoginAsync((string)header[0], (string)header[1]);
         throw new NotImplementedException();
     }
 }

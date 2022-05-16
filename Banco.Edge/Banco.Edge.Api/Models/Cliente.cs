@@ -28,9 +28,9 @@ public class Cliente
     [CpfOrCnpj]
     public string CpfOuCnpj { get; set; }
 
+    public string? Chave { get; internal set; }
+
     public Dml.Cliente ToDml()
-        => new(Id, Nome, Telefone, Email, CpfOuCnpj)
-        {
-            Senha = Senha
-        };
+        => new(Id, Nome, Telefone, Email, CpfOuCnpj, Senha, Chave ?? string.Empty, false);
+
 }

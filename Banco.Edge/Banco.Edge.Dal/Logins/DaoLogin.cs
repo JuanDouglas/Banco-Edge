@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Banco.Edge.Dal.Logins;
 public sealed class DaoLogin : DaoBase
 {
-    public async Task<Login> BuscarLoginAsync(string token, int contaId)
+    public async Task<Login> BuscarLoginAsync(string token, string chaveConta)
     {
         throw new NotImplementedException();
     }

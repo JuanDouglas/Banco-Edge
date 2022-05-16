@@ -14,7 +14,9 @@ CREATE TABLE [Cliente](
     [Email] VARCHAR(500) UNIQUE NOT NULL,
     [Telefone] VARCHAR(15) NOT NULL,
     [CpfOuCnpj] VARCHAR(14) UNIQUE NOT NULL,
-    [Senha] VARCHAR(90) NOT NULL
+    [Senha] VARCHAR(90) NOT NULL,
+    [Chave] VARCHAR(96) UNIQUE NOT NULL,
+    [Cadastro] DATETIME2 NOT NULL
 );
 
 CREATE TABLE [Login](

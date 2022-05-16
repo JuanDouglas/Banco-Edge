@@ -5,26 +5,34 @@ namespace Banco.Edge.Dal;
 public abstract class DaoBase : IDisposable
 {
     private protected readonly SqlConnection conn;
-
+    private protected readonly SqlCommand cmd;
     public DaoBase()
     {
-        conn = new SqlConnection(Resources.ConnectionString);
+        cmd = new();
+        conn = new()
+        {
+            ConnectionString = Resources.ConnectionString
+        };
         conn.Open();
     }
     private protected async Task<DataSet> ExecuteQueryAsync(string nomeProcedure, List<SqlParameter> parametros, bool transaction = false)
     {
-        SqlCommand comando = new();
+        cmd.Parameters.Clear();
 
         foreach (var item in parametros)
-            comando.Parameters.Add(item);
+            cmd.Parameters.Add(item);
 
-        comando.CommandType = CommandType.StoredProcedure;
-        comando.CommandText = nomeProcedure;
-        comando.Connection = conn;
+        if (conn.State == ConnectionState.Closed)
+            await conn.OpenAsync();
+
+        cmd.CommandText = nomeProcedure;
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Connection = conn;
+
         if (transaction)
-            comando.Transaction = conn.BeginTransaction();
+            cmd.Transaction = conn.BeginTransaction();
 
-        SqlDataAdapter adapter = new(comando);
+        SqlDataAdapter adapter = new(cmd);
         DataSet dbSet = new();
 
         try
@@ -32,35 +40,49 @@ public abstract class DaoBase : IDisposable
             await Task.Run(() => adapter.Fill(dbSet));
 
             if (transaction)
-                await comando.Transaction.CommitAsync();
+                await cmd.Transaction.CommitAsync();
         }
         catch (Exception)
         {
             if (transaction)
-                await comando.Transaction.RollbackAsync();
+                await cmd.Transaction.RollbackAsync();
 
             throw;
         }
 
         return dbSet;
+
     }
     private protected async Task ExecuteNonQueryAsync(string nomeProcedure, List<SqlParameter> parametros, bool transaction = false)
     {
-        SqlCommand comando = new();
-
+        cmd.Parameters.Clear();
         foreach (var item in parametros)
-            comando.Parameters.Add(item);
+            cmd.Parameters.Add(item);
 
-        await conn.OpenAsync();
+        if (conn.State == ConnectionState.Closed)
+            await conn.OpenAsync();
 
-        comando.CommandType = CommandType.StoredProcedure;
-        comando.CommandText = nomeProcedure;
-        comando.Connection = conn;
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.CommandText = nomeProcedure;
+        cmd.Connection = conn;
 
         if (transaction)
-            comando.Transaction = conn.BeginTransaction();
+            cmd.Transaction = conn.BeginTransaction();
 
-        await comando.ExecuteNonQueryAsync();
+        try
+        {
+            await cmd.ExecuteNonQueryAsync();
+
+            if (transaction)
+                await cmd.Transaction.CommitAsync();
+        }
+        catch (Exception)
+        {
+            if (transaction)
+                await cmd.Transaction.RollbackAsync();
+
+            throw;
+        }
     }
     private protected DataRow[] DataTableToRows(DataSet ds)
     {
@@ -80,10 +102,17 @@ public abstract class DaoBase : IDisposable
 
     public void Dispose()
     {
+        cmd.Dispose();
+        conn.Dispose();
+
         if (conn.State != ConnectionState.Closed)
             conn.Close();
 
-        SqlConnection
-            .ClearPool(conn);
+        SqlConnection.ClearPool(conn);
+        GC.SuppressFinalize(this);
+        GC.Collect();
+
+        if (string.IsNullOrEmpty(conn.ConnectionString))
+            conn.ConnectionString = Resources.ConnectionString;
     }
 }

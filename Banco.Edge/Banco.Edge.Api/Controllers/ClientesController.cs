@@ -1,6 +1,7 @@
 ﻿using Banco.Edge.Api.Controllers.Base;
 using Banco.Edge.Api.Models;
 using Banco.Edge.Bll;
+using Banco.Edge.Bll.Base;
 using Banco.Edge.Bll.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Nexus.Tools.Validations.Middlewares.Authentication.Attributes;
@@ -18,8 +19,10 @@ public class ClientesController : ApiController
 
         try
         {
+            cliente.Chave = BoBase.GerarToken(96);
             cliente.Id = await BoCliente.CadastroAsync(cliente.ToDml());
             cliente.Senha = string.Empty;
+            cliente.Chave = string.Empty;
         }
         catch (EmUsoException ex)
         {

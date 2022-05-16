@@ -10,18 +10,18 @@ namespace Banco.Edge.Api.Controllers;
 [AllowAnonymous]
 public class AutenticacaoController : ApiController
 {
-    public BoLogin BoLogin { get; set; }
+    public static BoLogin BoLogin { get; set; } = new();
 
     public AutenticacaoController()
     {
-        BoLogin = new();
+
     }
 
     [HttpGet]
     [Route("Login")]
     public async Task<IActionResult> LoginAsync(string user, string senha)
     {
-        Dml.Cliente? cliente = await BoCliente.BuscarAsync(user);
+        Dml.Cliente? cliente = await BoCliente.BuscarAsync(user, false);
 
         if (cliente == null)
             return Unauthorized();
@@ -32,7 +32,7 @@ public class AutenticacaoController : ApiController
                 new IPAddress(new byte[] { 127, 0, 0, 1 });
 
             Dml.Login login = await BoLogin.LoginAsync(cliente, senha, address);
-            
+
             return Ok(new Models.Result.Login(login));
         }
         catch (SenhaInvalidaException)
