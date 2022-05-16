@@ -2,9 +2,12 @@
 using Banco.Edge.Bll;
 using Banco.Edge.Bll.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using Nexus.Tools.Validations.Middlewares.Authentication.Attributes;
 using System.Net;
 
 namespace Banco.Edge.Api.Controllers;
+
+[AllowAnonymous]
 public class AutenticacaoController : ApiController
 {
     public BoLogin BoLogin { get; set; }
@@ -28,12 +31,12 @@ public class AutenticacaoController : ApiController
             IPAddress address = HttpContext.Connection.RemoteIpAddress ??
                 new IPAddress(new byte[] { 127, 0, 0, 1 });
 
-            var login = await BoLogin.LoginAsync(cliente, senha, address);
-            return Ok(login);
+            Dml.Login login = await BoLogin.LoginAsync(cliente, senha, address);
+            
+            return Ok(new Models.Result.Login(login));
         }
         catch (SenhaInvalidaException)
         {
-
             return Unauthorized();
         }
     }

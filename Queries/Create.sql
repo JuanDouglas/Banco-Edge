@@ -19,10 +19,12 @@ CREATE TABLE [Cliente](
 
 CREATE TABLE [Login](
    [Id] INTEGER IDENTITY PRIMARY KEY NOT NULL,
-   [Token] VARCHAR(90) NOT NULL,
-   [IP] VARBINARY(4) NOT NULL,
-   [ContaId] INTEGER NOT NULL,
-   FOREIGN KEY ([ContaId]) REFERENCES [Cliente]([Id])
+   [Token] VARCHAR(96) NOT NULL,
+   /* Suporta IPV6 armazenando em 6 bytes o IP informado!*/
+   [IP] VARBINARY(6) NOT NULL,
+   [ClienteId] INTEGER NOT NULL,
+   [Data] DATETIME2 NOT NULL,
+   FOREIGN KEY ([ClienteId]) REFERENCES [Cliente]([Id])
 );
 
 CREATE TABLE [Conta](
