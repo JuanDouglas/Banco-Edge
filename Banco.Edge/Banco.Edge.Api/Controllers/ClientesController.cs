@@ -3,11 +3,13 @@ using Banco.Edge.Api.Models;
 using Banco.Edge.Bll;
 using Banco.Edge.Bll.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using Nexus.Tools.Validations.Middlewares.Authentication.Attributes;
 
 namespace Banco.Edge.Api.Controllers;
 public class ClientesController : ApiController
 {
     [HttpPut]
+    [AllowAnonymous]
     [Route("Cadastro")]
     public async Task<IActionResult> CadastroAsync(Cliente cliente)
     {
@@ -17,6 +19,7 @@ public class ClientesController : ApiController
         try
         {
             cliente.Id = await BoCliente.CadastroAsync(cliente.ToDml());
+            cliente.Senha = string.Empty;
         }
         catch (EmUsoException ex)
         {
