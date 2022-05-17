@@ -40,7 +40,7 @@ CREATE TABLE [Conta](
 
 /* Transações acontecem quando um cliente efetua saque, deposito ou transferência. */
 CREATE TABLE [Transacao](
-    [Id] INTEGER PRIMARY KEY NOT NULL,
+    [Id] INTEGER IDENTITY PRIMARY KEY NOT NULL,
     [Data] DATETIME2 NOT NULL,
     [Tipo] TINYINT NOT NULL,
     [Valor] MONEY NOT NULL,

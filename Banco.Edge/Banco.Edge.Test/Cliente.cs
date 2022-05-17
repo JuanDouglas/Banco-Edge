@@ -3,6 +3,7 @@ using Banco.Edge.Bll.Base;
 using Banco.Edge.Dml;
 using Banco.Edge.Dml.Enums;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -57,12 +58,12 @@ namespace Banco.Edge.Test
         {
             await boCliente.ObterContasAsync();
 
-            int nContas = (cliente.Contas ?? new List<Conta>()).Count;
+            int nContas = (cliente.Contas ?? Array.Empty<Conta>()).Length;
 
             await boCliente.CriarContaAsync(TipoConta.Poupanca);
             await boCliente.ObterContasAsync();
 
-            Assert.IsTrue((cliente.Contas ?? new List<Conta>()).Count > nContas);
+            Assert.IsTrue((cliente.Contas ?? Array.Empty<Conta>()).Length > nContas);
         }
     }
 }

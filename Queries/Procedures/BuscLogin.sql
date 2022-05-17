@@ -1,3 +1,6 @@
+USE [Banco Edge];
+GO
+
 CREATE PROC BuscarLogin 
 @Token VARCHAR(96),
 @ChaveConta VARCHAR(96)

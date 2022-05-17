@@ -13,4 +13,9 @@ public sealed class DaoConta : DaoBase
     {
         throw new NotImplementedException();
     }
+
+    public async Task<Conta[]> ObterContasAsync(int donoId)
+    {
+        throw new NotImplementedException();
+    }
 }

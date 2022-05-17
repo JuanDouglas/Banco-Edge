@@ -30,7 +30,8 @@ public class BoCliente : BoBase
     }
 
     public async Task ObterContasAsync() 
-    { 
+    {
+        await DaoConta.ObterContasAsync(Cliente.Id);
     }
 
     #region CRUD

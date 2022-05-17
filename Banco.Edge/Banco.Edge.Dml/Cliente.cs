@@ -25,7 +25,7 @@ public class Cliente
                 .ToArray());
     }
     private string? _cpfOuCnpj;
-    public List<Conta>? Contas { get; private set; }
+    public Conta[]? Contas { get; private set; }
 
     public Cliente(int id, string nome, string telefone, string email, string cpfOuCnpj, string senha, string chave, bool privado)
     {
