@@ -35,7 +35,7 @@ public class ClientesController : ApiController
 
     [HttpPost]
     [Route("Atualizar")]
-    public async Task<IActionResult> AtualizarAsync(Cliente cliente)
+    public async Task<IActionResult> AtualizarAsync(Cliente cliente, string? senha)
     {
         throw new NotImplementedException();
     }

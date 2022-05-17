@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Banco.Edge.Dal", "Banco.Edg
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Banco.Edge.Bll", "Banco.Edge.Bll\Banco.Edge.Bll.csproj", "{554031E8-5EB7-44FC-A8B2-C1944F40F5D1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Banco.Edge.Dml", "Banco.Edge.Dml\Banco.Edge.Dml.csproj", "{5BA19418-1FF9-4DAC-9D67-1267F19B12A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Banco.Edge.Dml", "Banco.Edge.Dml\Banco.Edge.Dml.csproj", "{5BA19418-1FF9-4DAC-9D67-1267F19B12A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Banco.Edge.Console", "Banco.Edge.Console\Banco.Edge.Console.csproj", "{C64B0638-9C7D-4310-BEF7-71F892DF92CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{5BA19418-1FF9-4DAC-9D67-1267F19B12A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5BA19418-1FF9-4DAC-9D67-1267F19B12A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5BA19418-1FF9-4DAC-9D67-1267F19B12A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C64B0638-9C7D-4310-BEF7-71F892DF92CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C64B0638-9C7D-4310-BEF7-71F892DF92CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C64B0638-9C7D-4310-BEF7-71F892DF92CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C64B0638-9C7D-4310-BEF7-71F892DF92CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

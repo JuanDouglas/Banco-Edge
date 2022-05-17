@@ -37,3 +37,17 @@ CREATE TABLE [Conta](
     [Criacao] DATETIME2 NOT NULL,
     FOREIGN KEY ([Dono]) REFERENCES [Cliente]([ID])
 );
+
+/* Transações acontecem quando um cliente efetua saque, deposito ou transferência. */
+CREATE TABLE [Transacao](
+    [Id] INTEGER PRIMARY KEY NOT NULL,
+    [Data] DATETIME2 NOT NULL,
+    [Tipo] TINYINT NOT NULL,
+    [Valor] MONEY NOT NULL,
+    [De] INTEGER NULL,
+    [Para] INTEGER NOT NULL,
+    [Referencia] INTEGER NULL,
+    FOREIGN KEY ([De]) REFERENCES [Conta]([Id]),
+    FOREIGN KEY ([Para]) REFERENCES [Conta]([Id]),
+    FOREIGN KEY ([Referencia]) REFERENCES [Transacao]([Id])
+);

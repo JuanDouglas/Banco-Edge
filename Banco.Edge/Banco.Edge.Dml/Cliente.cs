@@ -40,10 +40,15 @@ public class Cliente
             Chave = chave ?? throw new ArgumentNullException(nameof(chave));
             _senha = senha ?? throw new ArgumentNullException(nameof(senha));
         }
+        else
+        {
+            Chave = string.Empty;
+            _senha = string.Empty;
+        }
     }
 
     public Cliente(int id, string name, string telefone, string email, string cpfOuCnpj, string senha, string chave)
-        : this(id, name, telefone, email, cpfOuCnpj, senha, chave, false)
+        : this(id, name, telefone, email, cpfOuCnpj, BCrypt.Net.BCrypt.HashPassword(senha), chave, false)
     {
     }
 }

@@ -11,7 +11,7 @@ CREATE PROC InserirCliente
 AS
 BEGIN
 	DECLARE @Id INTEGER;
-
+	
 	INSERT INTO [Cliente]([Nome], [Telefone], [Email], [CpfOuCnpj], [Senha],[Chave],[Cadastro]) 
 	VALUES (@Nome, @Telefone, @Email, @CpfOuCnpj, @Senha, @Chave, GETDATE())
 

@@ -1,4 +1,5 @@
-﻿using Nexus.Tools.Validations.Attributes;
+﻿using Newtonsoft.Json;
+using Nexus.Tools.Validations.Attributes;
 
 namespace Banco.Edge.Api.Models;
 public class Cliente
@@ -11,6 +12,7 @@ public class Cliente
 
     [Required]
     [Password]
+    [JsonIgnore]
     [StringLength(20, MinimumLength = 3)]
     public string Senha { get; set; }
 
@@ -28,9 +30,9 @@ public class Cliente
     [CpfOrCnpj]
     public string CpfOuCnpj { get; set; }
 
-    public string? Chave { get; internal set; }
+    internal string? Chave { get; set; }
 
     public Dml.Cliente ToDml()
-        => new(Id, Nome, Telefone, Email, CpfOuCnpj, Senha, Chave ?? string.Empty, false);
+        => new(Id, Nome, Telefone, Email, CpfOuCnpj, Senha, Chave ?? string.Empty);
 
 }
