@@ -9,7 +9,12 @@ using System.Net;
 namespace Banco.Edge.Bll;
 public class BoLogin : BoBase
 {
-    DaoLogin dao = new();
+    public DaoLogin DaoLogin { get; set; }
+
+    public BoLogin()
+    {
+        DaoLogin = new();
+    }
     public async Task<Login> LoginAsync(Cliente cliente, string senha, IPAddress adress)
     {
         if (!BCrypt.Net.BCrypt.Verify(senha, cliente.Senha))
@@ -17,9 +22,9 @@ public class BoLogin : BoBase
 
         Login login = new(GerarToken(96), adress.GetAddressBytes(), cliente.Id);
 
-        using (dao)
+        using (DaoLogin)
         {
-            await dao.InsertLoginAsync(login);
+            await DaoLogin.InsertLoginAsync(login);
         }
 
         return login;

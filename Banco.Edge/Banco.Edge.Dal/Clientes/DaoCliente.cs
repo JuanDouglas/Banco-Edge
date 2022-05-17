@@ -17,6 +17,16 @@ public sealed class DaoCliente : DaoBase
         return clientes.Length < 1 ? null : clientes[0];
     }
 
+    public async Task ExcluirAsync(int id)
+    {
+        List<SqlParameter> parametros = new()
+        {
+            new SqlParameter("IdCliente", id)
+        };
+
+        await ExecuteQueryAsync("ExcluirCliente", parametros, true);
+    }
+
     public async Task<int> InserirCliente(Cliente cliente)
     {
         List<SqlParameter> parameters = new()

@@ -11,6 +11,7 @@ public class BoCliente : BoBase
 {
     public Cliente Cliente { get; set; }
     private protected DaoCliente DaoCliente { get; set; }
+    private protected DaoConta DaoConta { get; set; }
     public BoCliente(Cliente cliente) : base()
     {
         Cliente = cliente;
@@ -18,19 +19,54 @@ public class BoCliente : BoBase
         DaoConta = new();
     }
 
-    public void CriarConta(TipoConta tipo)
+    public async Task CriarContaAsync(TipoConta tipo)
+    {
+        Conta? conta = await DaoConta.BuscarContaAsync(Cliente.Id, tipo);
+
+        if (conta == null)
+            throw new Exception();
+
+        await DaoConta.CriarConta(tipo, Cliente.Id);
+    }
+
+    public async Task ObterContasAsync() 
+    { 
+    }
+
+    #region CRUD
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="cliente"></param>
+    /// <returns></returns>
+    public async Task AtualizarAsync(Cliente cliente)
     {
 
     }
 
-    public static async Task AtualizarAsync(Cliente cliente)
+    /// <summary>
+    /// Exclui um cliente é todos seus registros relacionados.
+    /// </summary>
+    /// <param name="senha">Senha do cliente.</param>
+    /// <returns></returns>
+    /// <exception cref="SenhaInvalidaException"></exception>
+    public async Task ExcluirAsync(string senha)
     {
+        if (!BCrypt.Net.BCrypt.Verify(senha, Cliente.Senha))
+            throw new SenhaInvalidaException();
 
+        await DaoCliente.ExcluirAsync(Cliente.Id);
     }
 
+    /// <summary>
+    /// Cadastro um novo cliente no banco.
+    /// </summary>
+    /// <param name="cliente"></param>
+    /// <returns></returns>
+    /// <exception cref="EmUsoException"></exception>
     public static async Task<int> CadastroAsync(Cliente cliente)
     {
-        DaoCliente dao = new();
+        using DaoCliente dao = new();
 
         Cliente? busca = await dao.ExisteAsync(cliente.Email, cliente.CpfOuCnpj);
 
@@ -42,12 +78,18 @@ public class BoCliente : BoBase
         return id;
     }
 
-    public static async Task<Cliente?> BuscarAsync(string email)
+    /// <summary>
+    /// Busca um cliente pelo seu e-mail
+    /// </summary>
+    /// <param name="email"></param>
+    /// <returns></returns>
+    public static async Task<Cliente?> BuscarAsync(string email, bool privado = true)
     {
-        DaoCliente dao = new();
+        using DaoCliente dao = new();
 
-        Cliente? cliente = await dao.ExisteAsync(email, null, true);
+        Cliente? cliente = await dao.ExisteAsync(email, null, privado);
 
         return cliente;
     }
+    #endregion
 }
