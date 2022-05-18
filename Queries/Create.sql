@@ -46,6 +46,7 @@ CREATE TABLE [Transacao](
     [Valor] MONEY NOT NULL,
     [De] INTEGER NULL,
     [Para] INTEGER NOT NULL,
+    [Descricao] VARCHAR(250) DEFAULT 'Operação não definida!',
     [Referencia] INTEGER NULL,
     FOREIGN KEY ([De]) REFERENCES [Conta]([Id]),
     FOREIGN KEY ([Para]) REFERENCES [Conta]([Id]),

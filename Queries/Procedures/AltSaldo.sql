@@ -12,9 +12,13 @@ CREATE PROC NovaTransacao
 @Valor MONEY,
 @De INTEGER = NULL,
 @Para INTEGER,
+@Descricao VARCHAR(2500),
 @Referencia INTEGER = NULL
 AS 
 BEGIN 
+    DECLARE @TransacaoId INTEGER;
+    DECLARE @Data DATETIME2;
+
     /*
         Caso for uma operação de saque, transferência ou 
         reembolso verifica se o valor em conta é igual o 
@@ -52,9 +56,13 @@ BEGIN
                 END 
         END
     BEGIN TRAN
-        INSERT INTO [Transacao]([Data], [Valor],[Tipo], [De], [Para], [Referencia])
-        VALUES (GETDATE(), @Valor, @Tipo, @De, @Para, @Referencia)
+        SET @Data = GETDATE();
+
+        INSERT INTO [Transacao]([Data], [Valor],[Tipo], [De], [Para], [Descricao], [Referencia])
+        VALUES (@Data, @Valor, @Tipo, @De, @Para, @Descricao, @Referencia)
         
+        SET @TransacaoId = SCOPE_IDENTITY();
+
         BEGIN TRY
             /* Operação de deposito */
             IF @Tipo = 0
@@ -80,7 +88,8 @@ BEGIN
                     WHERE [Id] = @Para 
                 END
 
-			END TRY
+            SELECT @TransacaoId, @Data;
+		END TRY
         BEGIN CATCH
             IF @@TRANCOUNT > 0
 				ROLLBACK

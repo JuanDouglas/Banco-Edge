@@ -3,9 +3,9 @@ GO
 
 CREATE PROC InserirConta
 @Tipo TINYINT = NULL,
-@ClienteId INTEGER
+@DonoId INTEGER
 AS 
 BEGIN 
-    INSERT INTO [Conta]([Dono],[Tipo],[Criacao])
-    VALUES (@ClienteId,@Tipo,GETDATE())
+    INSERT INTO [Conta]([Dono], [Tipo], [Criacao])
+    VALUES (@DonoId, @Tipo, GETDATE())
 END

@@ -21,18 +21,19 @@ public class BoCliente : BoBase
 
     public async Task CriarContaAsync(TipoConta tipo)
     {
-        Conta? conta = await DaoConta.BuscarContaAsync(Cliente.Id, tipo);
+        Conta[]? contas = await DaoConta.BuscarContasAsync(Cliente.Id, tipo: tipo);
 
-        if (conta == null)
+        // Um mesmo cliente não pode ter duas contas de mesmo tipo
+        if (contas != null &&
+            contas.Length > 0)
             throw new Exception();
 
         await DaoConta.CriarConta(tipo, Cliente.Id);
     }
 
-    public async Task ObterContasAsync() 
-    {
-        await DaoConta.ObterContasAsync(Cliente.Id);
-    }
+    public async Task ObterContasAsync()
+        => Cliente.Contas = await DaoConta.BuscarContasAsync(Cliente.Id);
+
 
     #region CRUD
     /// <summary>

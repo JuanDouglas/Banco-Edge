@@ -30,9 +30,6 @@ public static class Program
 
                 cli.Id = await BoCliente.CadastroAsync(cli);
             }
-
-            GC.SuppressFinalize(clientes);
-            GC.Collect();
         }
     }
 
