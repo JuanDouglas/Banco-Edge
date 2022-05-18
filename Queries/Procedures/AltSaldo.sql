@@ -57,13 +57,12 @@ BEGIN
         END
     BEGIN TRAN
         SET @Data = GETDATE();
-
-        INSERT INTO [Transacao]([Data], [Valor],[Tipo], [De], [Para], [Descricao], [Referencia])
-        VALUES (@Data, @Valor, @Tipo, @De, @Para, @Descricao, @Referencia)
-        
-        SET @TransacaoId = SCOPE_IDENTITY();
-
         BEGIN TRY
+            INSERT INTO [Transacao]([Data], [Valor],[Tipo], [De], [Para], [Descricao], [Referencia])
+            VALUES (@Data, @Valor, @Tipo, @De, @Para, @Descricao, @Referencia)
+        
+            SET @TransacaoId = SCOPE_IDENTITY();
+            
             /* Operação de deposito */
             IF @Tipo = 0
                 UPDATE [Conta] 

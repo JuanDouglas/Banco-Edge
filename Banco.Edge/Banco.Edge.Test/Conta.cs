@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 
 namespace Banco.Edge.Test;
-internal class Conta
+internal class TesteConta
 {
     [SetUp]
     public void Setup()

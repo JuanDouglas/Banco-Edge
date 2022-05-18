@@ -30,14 +30,20 @@ public class TesteCliente
     [Test]
     public async Task Cadastro()
     {
+        Cliente cliente = this.cliente;
+        var boCliente = new BoCliente(cliente);
+
         if (cliente.Id > 0)
-            await new BoCliente(cliente).ExcluirAsync(senha);
+            await boCliente.ExcluirAsync(senha);
 
         cliente.Id = await BoCliente.CadastroAsync(cliente);
 
-        cliente = await BoCliente.BuscarAsync(cliente.Email);
-
         Assert.IsTrue(cliente.Id > 0);
+
+        await boCliente.ObterContasAsync();
+
+        Assert.IsNotNull(cliente.Contas);
+        Assert.IsTrue(cliente.Contas.Length > 0);
     }
 
     [Test]

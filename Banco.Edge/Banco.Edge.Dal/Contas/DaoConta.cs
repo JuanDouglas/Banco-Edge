@@ -44,7 +44,9 @@ public sealed class DaoConta : DaoBase
             new SqlParameter("Para", contaId)
         };
 
-        ExecuteQueryAsync("", parametros);
+        await ExecuteQueryAsync("NovaTransacao", parametros);
+
+        throw new NotImplementedException();
     }
 
     private static Conta[]? ConverterContas(DataRow[] rows)
