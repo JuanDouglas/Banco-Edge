@@ -37,12 +37,12 @@ public abstract class DaoBase : IDisposable
 
         try
         {
-            await Task.Run(() => adapter.Fill(dbSet));
+            adapter.Fill(dbSet);
 
             if (transaction)
                 await cmd.Transaction.CommitAsync();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
             if (transaction)
                 await cmd.Transaction.RollbackAsync();
@@ -51,7 +51,6 @@ public abstract class DaoBase : IDisposable
         }
 
         return dbSet;
-
     }
     private protected async Task ExecuteNonQueryAsync(string nomeProcedure, List<SqlParameter> parametros, bool transaction = false)
     {
@@ -109,10 +108,11 @@ public abstract class DaoBase : IDisposable
             conn.Close();
 
         SqlConnection.ClearPool(conn);
-        GC.SuppressFinalize(this);
         GC.Collect();
 
         if (string.IsNullOrEmpty(conn.ConnectionString))
             conn.ConnectionString = Resources.ConnectionString;
+
+        GC.SuppressFinalize(this);
     }
 }

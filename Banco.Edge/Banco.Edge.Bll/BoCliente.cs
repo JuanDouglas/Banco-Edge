@@ -94,4 +94,11 @@ public class BoCliente : BoBase
         return cliente;
     }
     #endregion
+
+    public override void Dispose()
+    {
+        DaoCliente.Dispose();
+        DaoConta.Dispose();
+        GC.Collect();
+    }
 }

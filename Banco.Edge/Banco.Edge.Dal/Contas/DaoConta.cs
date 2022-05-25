@@ -44,9 +44,13 @@ public sealed class DaoConta : DaoBase
             new SqlParameter("Para", contaId)
         };
 
-        await ExecuteQueryAsync("NovaTransacao", parametros);
+        DataSet dataSet = await ExecuteQueryAsync("NovaTransacao", parametros);
+        DataRow row = DataTableToRows(dataSet).First();
 
-        throw new NotImplementedException();
+        int id = row.Field<int>(nameof(Transacao.Id));
+        DateTime data = row.Field<DateTime>(nameof(Transacao.Data));
+
+        return new(id, valor, data, tipo, contaId);
     }
 
     private static Conta[]? ConverterContas(DataRow[] rows)

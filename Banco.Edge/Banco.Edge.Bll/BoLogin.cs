@@ -54,4 +54,11 @@ public class BoLogin : BoBase
         await dao.BuscarLoginAsync((string)header[0], (string)header[1]);
         throw new NotImplementedException();
     }
+
+    public override void Dispose()
+    {
+        DaoLogin.Dispose();
+        GC.Collect();
+        GC.SuppressFinalize(this);
+    }
 }

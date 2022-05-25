@@ -87,7 +87,7 @@ BEGIN
                     WHERE [Id] = @Para 
                 END
 
-            SELECT @TransacaoId, @Data;
+            SELECT [Id] = @TransacaoId, [Data] = @Data;
 		END TRY
         BEGIN CATCH
             IF @@TRANCOUNT > 0

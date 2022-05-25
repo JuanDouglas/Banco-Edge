@@ -3,12 +3,16 @@ using Banco.Edge.Bll;
 using Banco.Edge.Bll.Base;
 using Banco.Edge.Dml;
 using Newtonsoft.Json;
+using System.Data.SqlClient;
 using System.IO;
 
 public static class Program
 {
+    public static Cliente[] Clientes { get; set; }
+    static Random random = new();
     public static async Task Main(string[] args)
     {
+        List<Cliente> clis = new();
         string path = Environment.CurrentDirectory;
         path = Path.Combine(path, "Pessoas");
         var files = Directory.GetFiles(path);
@@ -17,19 +21,35 @@ public static class Program
         {
             Cliente[] clientes = ObterClientes(file, out string[] senhas);
 
+            Console.WriteLine($"Inserindo {clientes.Length} novos clientes.");
             for (int i = 0; i < clientes.Length; i++)
             {
                 Cliente cli = (await BoCliente.BuscarAsync(clientes[i].Email, false)) ?? clientes[i];
+                clientes[i] = cli;
 
-                if (cli.Id > 0)
-                {
-                    BoCliente boCliente = new(cli);
+                using BoCliente boCliente = new(cli);
 
-                    await boCliente.ExcluirAsync(senhas[i]);
-                }
+                if (cli.Id < 1)
+                    cli.Id = await BoCliente.CadastroAsync(cli);
 
-                cli.Id = await BoCliente.CadastroAsync(cli);
+                await boCliente.ObterContasAsync();
             }
+
+            clis.AddRange(clientes);
+        }
+
+        Clientes = clis.ToArray();
+        Console.WriteLine("Clientes inseridos com sucesso!");
+        Console.Write("Digite o numero de interações que deseja fazer: ");
+        _ = int.TryParse(Console.ReadLine(), out int interacoes);
+
+        for (int i = 1; i <= interacoes; i++)
+        {
+            int count = Clientes.Length / interacoes;
+            int start = count * (i - 1);
+
+            Thread th = new(() => Interacoes(start, count));
+            th.Start();
         }
     }
 
@@ -113,5 +133,63 @@ public static class Program
         return new(0, nome, celular, email, cpf, senha, chave);
 #pragma warning restore CS8604 // Possible null reference argument.
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+    }
+
+    public static async void Interacoes(int start, int count)
+    {
+        Cliente[] clientes = new Cliente[count];
+
+        Array.Copy(Clientes, start, clientes, 0, count);
+
+        while (true)
+        {
+            int index = random.Next(clientes.Length);
+            int transacoes = random.Next(10);
+
+            Conta? conta = clientes[index].Contas?.First();
+            if (conta == null)
+                continue;
+
+            using BoConta boContaPri = new(conta, clientes[index]);
+
+            if (conta.Saldo < 2m * transacoes)
+                await boContaPri.DepositarAsync(random.NextDecimal(100, false));
+
+            for (int x = 0; x < transacoes; x++)
+            {
+                Conta? contaRecebe = clientes[random.Next(clientes.Length)].Contas?.First();
+
+                if (conta == null)
+                    continue;
+
+                decimal value = conta.Saldo / (transacoes + 1);
+
+                await boContaPri.TransferirAsync(contaRecebe.Id, value);
+            }
+        }
+    }
+
+
+    public static int NextInt32(this Random rng)
+    {
+        int firstBits = rng.Next(0, 1 << 4) << 28;
+        int lastBits = rng.Next(0, 1 << 28);
+        return firstBits | lastBits;
+    }
+
+    public static decimal NextDecimal(this Random rng, decimal? max = null, bool? negative = null)
+    {
+        byte escala = (byte)rng.Next(29);
+        bool assinatura = (negative == null) ? rng.Next(2) == 1 : negative ?? false;
+        decimal resultado = new decimal(rng.NextInt32(),
+                           rng.NextInt32(),
+                           rng.NextInt32(),
+                           assinatura,
+                           escala);
+
+        while (resultado > max)
+            resultado /= 2m;
+
+        return resultado;
     }
 }
