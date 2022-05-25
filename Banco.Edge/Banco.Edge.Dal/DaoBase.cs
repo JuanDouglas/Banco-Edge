@@ -98,7 +98,6 @@ public abstract class DaoBase : IDisposable
 
         return rows.ToArray();
     }
-
     public void Dispose()
     {
         cmd.Dispose();

@@ -1,10 +1,7 @@
-﻿// See https://aka.ms/new-console-template for more information
-using Banco.Edge.Bll;
+﻿using Banco.Edge.Bll;
 using Banco.Edge.Bll.Base;
 using Banco.Edge.Dml;
 using Newtonsoft.Json;
-using System.Data.SqlClient;
-using System.IO;
 
 public static class Program
 {
@@ -16,12 +13,12 @@ public static class Program
         string path = Environment.CurrentDirectory;
         path = Path.Combine(path, "Pessoas");
         var files = Directory.GetFiles(path);
+        Console.WriteLine($"Carregando clientes de {files.Length} arquivos.");
 
         foreach (var file in files)
         {
             Cliente[] clientes = ObterClientes(file, out string[] senhas);
 
-            Console.WriteLine($"Inserindo {clientes.Length} novos clientes.");
             for (int i = 0; i < clientes.Length; i++)
             {
                 Cliente cli = (await BoCliente.BuscarAsync(clientes[i].Email, false)) ?? clientes[i];
@@ -39,7 +36,6 @@ public static class Program
         }
 
         Clientes = clis.ToArray();
-        Console.WriteLine("Clientes inseridos com sucesso!");
         Console.Write("Digite o numero de interações que deseja fazer: ");
         _ = int.TryParse(Console.ReadLine(), out int interacoes);
 
@@ -152,8 +148,8 @@ public static class Program
 
             using BoConta boContaPri = new(conta, clientes[index]);
 
-            if (conta.Saldo < 2m * transacoes)
-                await boContaPri.DepositarAsync(random.NextDecimal(100, false));
+            if (conta.Saldo < 1.01m * transacoes)
+                await boContaPri.DepositarAsync(random.Next(100,1000));
 
             for (int x = 0; x < transacoes; x++)
             {
@@ -168,7 +164,6 @@ public static class Program
             }
         }
     }
-
 
     public static int NextInt32(this Random rng)
     {
