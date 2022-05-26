@@ -51,11 +51,4 @@ public class BoConta : BoBase
 
         return transacao;
     }
-
-    public override void Dispose()
-    {
-        DaoConta.Dispose();
-        GC.Collect();
-        GC.SuppressFinalize(this);
-    }
 }

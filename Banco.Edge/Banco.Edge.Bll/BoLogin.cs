@@ -22,10 +22,7 @@ public class BoLogin : BoBase
 
         Login login = new(GerarToken(96), adress.GetAddressBytes(), cliente.Id);
 
-        using (DaoLogin)
-        {
-            await DaoLogin.InsertLoginAsync(login);
-        }
+        await DaoLogin.InsertLoginAsync(login);
 
         return login;
     }
@@ -49,16 +46,9 @@ public class BoLogin : BoBase
         if (string.IsNullOrEmpty((string)header))
             return new(isValid, isAuthenticated);
 
-        using DaoLogin dao = new();
+        DaoLogin dao = new();
 
         await dao.BuscarLoginAsync((string)header[0], (string)header[1]);
         throw new NotImplementedException();
-    }
-
-    public override void Dispose()
-    {
-        DaoLogin.Dispose();
-        GC.Collect();
-        GC.SuppressFinalize(this);
     }
 }

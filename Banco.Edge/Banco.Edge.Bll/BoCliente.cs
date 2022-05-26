@@ -12,8 +12,6 @@ public class BoCliente : BoBase
     public Cliente Cliente { get; set; }
     private protected DaoCliente DaoCliente { get; set; }
     private protected DaoConta DaoConta { get; set; }
-
-    private protected static DaoCliente daoCliente = new();
     public BoCliente(Cliente cliente) : base()
     {
         Cliente = cliente;
@@ -70,6 +68,7 @@ public class BoCliente : BoBase
     /// <exception cref="EmUsoException"></exception>
     public static async Task<int> CadastroAsync(Cliente cliente)
     {
+        DaoCliente daoCliente = new();
         Cliente? busca = await daoCliente.ExisteAsync(cliente.Email, cliente.CpfOuCnpj);
 
         if (busca != null)
@@ -87,17 +86,10 @@ public class BoCliente : BoBase
     /// <returns></returns>
     public static async Task<Cliente?> BuscarAsync(string email, bool privado = true)
     {
+        DaoCliente daoCliente = new();
         Cliente? cliente = await daoCliente.ExisteAsync(email, null, privado);
 
         return cliente;
     }
     #endregion
-
-    public override void Dispose()
-    {
-        DaoCliente.Dispose();
-        DaoConta.Dispose();
-        GC.Collect();
-        GC.SuppressFinalize(this);
-    }
 }

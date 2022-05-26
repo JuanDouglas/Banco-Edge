@@ -2,21 +2,17 @@
 using System.Data.SqlClient;
 
 namespace Banco.Edge.Dal;
-public abstract class DaoBase : IDisposable
+public abstract class DaoBase 
 {
-    private protected readonly SqlConnection conn;
-    private protected readonly SqlCommand cmd;
     public DaoBase()
     {
-        cmd = new();
-        conn = new()
-        {
-            ConnectionString = Resources.ConnectionString
-        };
-        conn.Open();
+       
     }
     private protected async Task<DataSet> ExecuteQueryAsync(string nomeProcedure, List<SqlParameter> parametros, bool transaction = false)
     {
+        SqlConnection conn = new(Resources.ConnectionString);
+        SqlCommand cmd = conn.CreateCommand();
+
         cmd.Parameters.Clear();
         
         foreach (var item in parametros)
@@ -27,7 +23,6 @@ public abstract class DaoBase : IDisposable
 
         cmd.CommandText = nomeProcedure;
         cmd.CommandType = CommandType.StoredProcedure;
-        cmd.Connection = conn;
 
         if (transaction)
             cmd.Transaction = conn.BeginTransaction();
@@ -37,6 +32,7 @@ public abstract class DaoBase : IDisposable
 
         try
         {
+#warning Fill resulta em parada sem exeção
             adapter.Fill(dbSet);
 
             if (transaction)
@@ -54,6 +50,9 @@ public abstract class DaoBase : IDisposable
     }
     private protected async Task ExecuteNonQueryAsync(string nomeProcedure, List<SqlParameter> parametros, bool transaction = false)
     {
+        SqlConnection conn = new(Resources.ConnectionString);
+        SqlCommand cmd = conn.CreateCommand();
+
         cmd.Parameters.Clear();
         foreach (var item in parametros)
             cmd.Parameters.Add(item);
@@ -97,21 +96,5 @@ public abstract class DaoBase : IDisposable
         }
 
         return rows.ToArray();
-    }
-    public void Dispose()
-    {
-        cmd.Dispose();
-        conn.Dispose();
-
-        if (conn.State != ConnectionState.Closed)
-            conn.Close();
-
-        SqlConnection.ClearPool(conn);
-        GC.Collect();
-
-        if (string.IsNullOrEmpty(conn.ConnectionString))
-            conn.ConnectionString = Resources.ConnectionString;
-
-        GC.SuppressFinalize(this);
     }
 }

@@ -25,7 +25,7 @@ public static class Program
                 Cliente cli = await BoCliente.BuscarAsync(clientes[i].Email, false) ?? clientes[i];
                 clientes[i] = cli;
 
-                using BoCliente boCliente = new(cli);
+                BoCliente boCliente = new(cli);
 
                 if (cli.Id < 1)
                     cli.Id = await BoCliente.CadastroAsync(cli);
@@ -38,7 +38,7 @@ public static class Program
 
                 if (conta.Saldo < 1m)
                 {
-                    using BoConta boConta = new(conta, cli);
+                    BoConta boConta = new(conta, cli);
                     decimal valor = rd.Next(10, 200);
                     await boConta.DepositarAsync(valor);
                 }
@@ -162,7 +162,7 @@ public static class Program
             if (conta == null)
                 continue;
 
-            using BoConta boContaPri = new(conta, clientes[index]);
+            BoConta boContaPri = new(conta, clientes[index]);
 
             for (int x = 0; x < transacoes; x++)
             {
@@ -193,7 +193,7 @@ public static class Program
             if (conta == null)
                 continue;
 
-            using BoConta boConta = new(conta, cliente);
+            BoConta boConta = new(conta, cliente);
 
             decimal valorTotal = rd.Next((int)Math.Round(2d * 50 * 0.8), 1000) * 0.8m;
             int depositos = rd.Next(50);

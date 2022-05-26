@@ -2,7 +2,7 @@
 
 namespace Banco.Edge.Bll.Base;
 
-public abstract class BoBase : IDisposable
+public abstract class BoBase 
 {
 
     /// <summary>
@@ -43,6 +43,4 @@ public abstract class BoBase : IDisposable
 
         return resultado;
     }
-
-    public abstract void Dispose();
 }
