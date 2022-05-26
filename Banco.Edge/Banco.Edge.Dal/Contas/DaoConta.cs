@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 namespace Banco.Edge.Dal.Contas;
 public sealed class DaoConta : DaoBase
 {
-    public async Task<Conta[]?> BuscarContasAsync(int donoId, TipoConta? tipo = null, int pegar = 3)
+    public Conta[]? BuscarContasAsync(int donoId, TipoConta? tipo = null, int pegar = 3)
     {
         List<SqlParameter> parametros = new()
         {
@@ -17,13 +17,13 @@ public sealed class DaoConta : DaoBase
         if (tipo != null)
             parametros.Add(new(nameof(Conta.Tipo), (byte)(tipo ?? TipoConta.Corrente)));
 
-        DataSet data = await ExecuteQueryAsync("BuscarContas", parametros);
+        DataSet data = ExecuteQuery("BuscarContas", parametros);
         DataRow[] rows = DataTableToRows(data);
 
         return rows.Length > 0 ? ConverterContas(rows) : null;
     }
 
-    public async Task CriarConta(TipoConta tipo, int donoId)
+    public void CriarConta(TipoConta tipo, int donoId)
     {
         List<SqlParameter> parametros = new()
         {
@@ -31,10 +31,10 @@ public sealed class DaoConta : DaoBase
             new SqlParameter(nameof(Conta.Tipo), (byte)tipo)
         };
 
-        await ExecuteNonQueryAsync("InserirConta", parametros);
+        ExecuteNonQuery("InserirConta", parametros);
     }
 
-    public async Task<Transacao> NovaTransacaoAsync(TipoTransacao tipo, decimal valor, string descricao, int contaId, int? deId, int? referenciaId = null)
+    public Transacao NovaTransacao(TipoTransacao tipo, decimal valor, string descricao, int contaId, int? deId, int? referenciaId = null)
     {
         List<SqlParameter> parametros = new()
         {
@@ -44,7 +44,7 @@ public sealed class DaoConta : DaoBase
             new SqlParameter("Para", contaId)
         };
 
-        DataSet dataSet = await ExecuteQueryAsync("NovaTransacao", parametros);
+        DataSet dataSet =  ExecuteQuery("NovaTransacao", parametros);
         DataRow row = DataTableToRows(dataSet).First();
 
         int id = row.Field<int>(nameof(Transacao.Id));

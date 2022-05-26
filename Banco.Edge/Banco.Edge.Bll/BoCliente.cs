@@ -19,20 +19,20 @@ public class BoCliente : BoBase
         DaoConta = new();
     }
 
-    public async Task CriarContaAsync(TipoConta tipo)
+    public void CriarContaAsync(TipoConta tipo)
     {
-        Conta[]? contas = await DaoConta.BuscarContasAsync(Cliente.Id, tipo: tipo);
+        Conta[]? contas = DaoConta.BuscarContasAsync(Cliente.Id, tipo: tipo);
 
         // Um mesmo cliente não pode ter duas contas de mesmo tipo
         if (contas != null &&
             contas.Length > 0)
             throw new Exception();
 
-        await DaoConta.CriarConta(tipo, Cliente.Id);
+        DaoConta.CriarConta(tipo, Cliente.Id);
     }
 
-    public async Task ObterContasAsync()
-        => Cliente.Contas = await DaoConta.BuscarContasAsync(Cliente.Id);
+    public void ObterContas()
+        => Cliente.Contas = DaoConta.BuscarContasAsync(Cliente.Id);
 
 
     #region CRUD
@@ -52,12 +52,12 @@ public class BoCliente : BoBase
     /// <param name="senha">Senha do cliente.</param>
     /// <returns></returns>
     /// <exception cref="SenhaInvalidaException"></exception>
-    public async Task ExcluirAsync(string senha)
+    public void ExcluirAsync(string senha)
     {
         if (!BCrypt.Net.BCrypt.Verify(senha, Cliente.Senha))
             throw new SenhaInvalidaException();
 
-        await DaoCliente.ExcluirAsync(Cliente.Id);
+        DaoCliente.Excluir(Cliente.Id);
     }
 
     /// <summary>
@@ -66,15 +66,15 @@ public class BoCliente : BoBase
     /// <param name="cliente"></param>
     /// <returns></returns>
     /// <exception cref="EmUsoException"></exception>
-    public static async Task<int> CadastroAsync(Cliente cliente)
+    public static int CadastroAsync(Cliente cliente)
     {
         DaoCliente daoCliente = new();
-        Cliente? busca = await daoCliente.ExisteAsync(cliente.Email, cliente.CpfOuCnpj);
+        Cliente? busca = daoCliente.ExisteAsync(cliente.Email, cliente.CpfOuCnpj);
 
         if (busca != null)
             throw new EmUsoException(busca.Email == cliente.Email ? nameof(cliente.Email) : nameof(cliente.CpfOuCnpj));
 
-        int id = await daoCliente.InserirCliente(cliente);
+        int id = daoCliente.InserirCliente(cliente);
 
         return id;
     }
@@ -84,10 +84,10 @@ public class BoCliente : BoBase
     /// </summary>
     /// <param name="email"></param>
     /// <returns></returns>
-    public static async Task<Cliente?> BuscarAsync(string email, bool privado = true)
+    public static Cliente? BuscarAsync(string email, bool privado = true)
     {
         DaoCliente daoCliente = new();
-        Cliente? cliente = await daoCliente.ExisteAsync(email, null, privado);
+        Cliente? cliente = daoCliente.ExisteAsync(email, null, privado);
 
         return cliente;
     }

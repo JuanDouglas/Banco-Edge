@@ -2,24 +2,24 @@
 using System.Data.SqlClient;
 
 namespace Banco.Edge.Dal;
-public abstract class DaoBase 
+public abstract class DaoBase
 {
     public DaoBase()
     {
-       
+
     }
-    private protected async Task<DataSet> ExecuteQueryAsync(string nomeProcedure, List<SqlParameter> parametros, bool transaction = false)
+    private protected DataSet ExecuteQuery(string nomeProcedure, List<SqlParameter> parametros, bool transaction = false)
     {
         SqlConnection conn = new(Resources.ConnectionString);
         SqlCommand cmd = conn.CreateCommand();
 
         cmd.Parameters.Clear();
-        
+
         foreach (var item in parametros)
             cmd.Parameters.Add(item);
 
         if (conn.State == ConnectionState.Closed)
-            await conn.OpenAsync();
+            conn.Open();
 
         cmd.CommandText = nomeProcedure;
         cmd.CommandType = CommandType.StoredProcedure;
@@ -36,19 +36,19 @@ public abstract class DaoBase
             adapter.Fill(dbSet);
 
             if (transaction)
-                await cmd.Transaction.CommitAsync();
+                cmd.Transaction.Commit();
         }
         catch (Exception ex)
         {
             if (transaction)
-                await cmd.Transaction.RollbackAsync();
+                cmd.Transaction.Rollback();
 
             throw;
         }
 
         return dbSet;
     }
-    private protected async Task ExecuteNonQueryAsync(string nomeProcedure, List<SqlParameter> parametros, bool transaction = false)
+    private protected void ExecuteNonQuery(string nomeProcedure, List<SqlParameter> parametros, bool transaction = false)
     {
         SqlConnection conn = new(Resources.ConnectionString);
         SqlCommand cmd = conn.CreateCommand();
@@ -58,7 +58,7 @@ public abstract class DaoBase
             cmd.Parameters.Add(item);
 
         if (conn.State == ConnectionState.Closed)
-            await conn.OpenAsync();
+            conn.Open();
 
         cmd.CommandType = CommandType.StoredProcedure;
         cmd.CommandText = nomeProcedure;
@@ -69,15 +69,15 @@ public abstract class DaoBase
 
         try
         {
-            await cmd.ExecuteNonQueryAsync();
+            cmd.ExecuteNonQuery();
 
             if (transaction)
-                await cmd.Transaction.CommitAsync();
+                cmd.Transaction.Commit();
         }
         catch (Exception)
         {
             if (transaction)
-                await cmd.Transaction.RollbackAsync();
+                cmd.Transaction.Rollback();
 
             throw;
         }

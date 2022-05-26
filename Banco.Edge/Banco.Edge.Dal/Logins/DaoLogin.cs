@@ -13,7 +13,7 @@ public sealed class DaoLogin : DaoBase
     {
         throw new NotImplementedException();
     }
-    public async Task InsertLoginAsync(Login login)
+    public void InserirLogin(Login login)
     {
         List<SqlParameter> parametros = new()
         {
@@ -22,6 +22,6 @@ public sealed class DaoLogin : DaoBase
             new SqlParameter(nameof(Login.ClienteId), login.ClienteId)
         };
 
-        await ExecuteNonQueryAsync("InserirLogin", parametros, true);
+       ExecuteNonQuery("InserirLogin", parametros, true);
     }
 }

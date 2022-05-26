@@ -6,28 +6,28 @@ namespace Banco.Edge.Dal.Clientes;
 
 public sealed class DaoCliente : DaoBase
 {
-    public async Task<Cliente?> ExisteAsync(string? email, string? cpfOuCnpj, bool ocultarSensiveis = true)
+    public Cliente? ExisteAsync(string? email, string? cpfOuCnpj, bool ocultarSensiveis = true)
     {
         if (string.IsNullOrEmpty(cpfOuCnpj) &&
             string.IsNullOrEmpty(email))
             throw new ArgumentNullException(nameof(cpfOuCnpj), "Ao menos um parametro deve conter valor!");
 
-        Cliente[] clientes = await ExecutarBuscaAsync(email: email, cpfOuCnpj: cpfOuCnpj, ocultarSensiveis: ocultarSensiveis);
+        Cliente[] clientes = ExecutarBusca(email: email, cpfOuCnpj: cpfOuCnpj, ocultarSensiveis: ocultarSensiveis);
 
         return clientes.Length < 1 ? null : clientes[0];
     }
 
-    public async Task ExcluirAsync(int id)
+    public void Excluir(int id)
     {
         List<SqlParameter> parametros = new()
         {
             new SqlParameter("IdCliente", id)
         };
 
-        await ExecuteQueryAsync("ExcluirCliente", parametros, true);
+        ExecuteQuery("ExcluirCliente", parametros, true);
     }
 
-    public async Task<int> InserirCliente(Cliente cliente)
+    public int InserirCliente(Cliente cliente)
     {
         List<SqlParameter> parameters = new()
         {
@@ -39,7 +39,7 @@ public sealed class DaoCliente : DaoBase
             new SqlParameter(nameof(Cliente.CpfOuCnpj), cliente.CpfOuCnpj)
         };
 
-        DataSet dbSet = await ExecuteQueryAsync("InserirCliente", parameters, true);
+        DataSet dbSet = ExecuteQuery("InserirCliente", parameters, true);
         DataRowCollection rows = dbSet.Tables[0].Rows;
 
         int id = -1;
@@ -50,7 +50,7 @@ public sealed class DaoCliente : DaoBase
         return id;
     }
 
-    private async Task<Cliente[]> ExecutarBuscaAsync(
+    private Cliente[] ExecutarBusca(
         int? id = null,
         string? email = null,
         string? cpfOuCnpj = null,
@@ -67,7 +67,7 @@ public sealed class DaoCliente : DaoBase
             new(nameof(Cliente.CpfOuCnpj), cpfOuCnpj)
         };
 
-        DataSet ds = await ExecuteQueryAsync("BuscaCliente", parameters);
+        DataSet ds = ExecuteQuery("BuscaCliente", parameters);
 
         DataRow[] rows = DataTableToRows(ds);
 

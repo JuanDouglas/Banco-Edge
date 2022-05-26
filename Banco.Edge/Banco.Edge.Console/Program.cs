@@ -22,15 +22,15 @@ public static class Program
 
             for (int i = 0; i < clientes.Length; i++)
             {
-                Cliente cli = await BoCliente.BuscarAsync(clientes[i].Email, false) ?? clientes[i];
+                Cliente cli = BoCliente.BuscarAsync(clientes[i].Email, false) ?? clientes[i];
                 clientes[i] = cli;
 
                 BoCliente boCliente = new(cli);
 
                 if (cli.Id < 1)
-                    cli.Id = await BoCliente.CadastroAsync(cli);
+                    cli.Id = BoCliente.CadastroAsync(cli);
 
-                await boCliente.ObterContasAsync();
+                boCliente.ObterContas();
 
                 Conta? conta = cli.Contas?.First();
                 if (conta == null)
@@ -40,7 +40,7 @@ public static class Program
                 {
                     BoConta boConta = new(conta, cli);
                     decimal valor = rd.Next(10, 200);
-                    await boConta.DepositarAsync(valor);
+                    boConta.Depositar(valor);
                 }
             }
 
@@ -147,7 +147,7 @@ public static class Program
 #pragma warning restore CS8604 // Possible null reference argument.
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
     }
-    public static async void Transferencias(int start, int count)
+    public static void Transferencias(int start, int count)
     {
         Cliente[] clientes = new Cliente[count];
 
@@ -176,11 +176,11 @@ public static class Program
 
                 decimal value = conta.Saldo / peso;
 
-                await boContaPri.TransferirAsync(contaRecebe.Id, value);
+                boContaPri.Transferir(contaRecebe.Id, value);
             }
         }
     }
-    public static async void Depositos()
+    public static void Depositos()
     {
         while (true)
         {
@@ -199,7 +199,7 @@ public static class Program
             int depositos = rd.Next(50);
 
             for (int i = 0; i < depositos; i++)
-                _ = await boConta.DepositarAsync(valorTotal / depositos);
+                _ = boConta.Depositar(valorTotal / depositos);
 
             Thread.Sleep(rd.Next(0, 10000));
         }

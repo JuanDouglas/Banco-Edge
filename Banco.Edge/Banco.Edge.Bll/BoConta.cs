@@ -22,7 +22,7 @@ public class BoConta : BoBase
         Conta = conta;
     }
 
-    public async Task TransferirAsync(int idConta, decimal valor, string? descricao = null)
+    public void Transferir(int idConta, decimal valor, string? descricao = null)
     {
         if (valor < minimoTransacao ||
             valor > maximoValorMoney)
@@ -32,12 +32,12 @@ public class BoConta : BoBase
             throw new ArgumentException();
 
         valor = decimal.Round(valor, 2);
-        await DaoConta.NovaTransacaoAsync(TipoTransacao.Transferencia, valor, descricao ?? descricaoTransferencia, idConta, Conta.Id);
+        DaoConta.NovaTransacao(TipoTransacao.Transferencia, valor, descricao ?? descricaoTransferencia, idConta, Conta.Id);
 
         Conta.Saldo -= valor;
     }
 
-    public async Task<Transacao> DepositarAsync(decimal valor, string? descricao = null)
+    public Transacao Depositar(decimal valor, string? descricao = null)
     {
         if (valor < minimoTransacao ||
             valor > maximoValorMoney)
@@ -45,7 +45,7 @@ public class BoConta : BoBase
 
         valor = decimal.Round(valor, 2);
 
-        Transacao transacao = await DaoConta.NovaTransacaoAsync(TipoTransacao.Deposito, valor, descricao ?? descricaoDeposito, Conta.Id, null);
+        Transacao transacao = DaoConta.NovaTransacao(TipoTransacao.Deposito, valor, descricao ?? descricaoDeposito, Conta.Id, null);
 
         Conta.Saldo += transacao.Valor;
 

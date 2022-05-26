@@ -15,14 +15,14 @@ public class BoLogin : BoBase
     {
         DaoLogin = new();
     }
-    public async Task<Login> LoginAsync(Cliente cliente, string senha, IPAddress adress)
+    public Login LoginAsync(Cliente cliente, string senha, IPAddress adress)
     {
         if (!BCrypt.Net.BCrypt.Verify(senha, cliente.Senha))
             throw new SenhaInvalidaException();
 
         Login login = new(GerarToken(96), adress.GetAddressBytes(), cliente.Id);
 
-        await DaoLogin.InsertLoginAsync(login);
+        DaoLogin.InserirLogin(login);
 
         return login;
     }

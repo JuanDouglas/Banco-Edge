@@ -40,7 +40,7 @@ public class TesteCliente
 
         Assert.IsTrue(cliente.Id > 0);
 
-        await boCliente.ObterContasAsync();
+        await boCliente.ObterContas();
 
         Assert.IsNotNull(cliente.Contas);
         Assert.IsTrue(cliente.Contas.Length > 0);
@@ -54,12 +54,12 @@ public class TesteCliente
         if (cliente.Id < 1)
             cliente.Id = await BoCliente.CadastroAsync(cliente);
 
-        await boCliente.ObterContasAsync();
+        await boCliente.ObterContas();
 
         int nContas = (cliente.Contas ?? Array.Empty<Conta>()).Length;
 
         await boCliente.CriarContaAsync(TipoConta.Poupanca);
-        await boCliente.ObterContasAsync();
+        await boCliente.ObterContas();
 
         Assert.IsTrue((cliente.Contas ?? Array.Empty<Conta>()).Length > nContas);
     }
