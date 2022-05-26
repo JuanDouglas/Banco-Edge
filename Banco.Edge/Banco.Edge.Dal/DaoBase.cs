@@ -32,7 +32,6 @@ public abstract class DaoBase
 
         try
         {
-#warning Fill resulta em parada sem exeção
             adapter.Fill(dbSet);
 
             if (transaction)
