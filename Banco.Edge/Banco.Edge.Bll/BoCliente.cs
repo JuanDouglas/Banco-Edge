@@ -12,6 +12,8 @@ public class BoCliente : BoBase
     public Cliente Cliente { get; set; }
     private protected DaoCliente DaoCliente { get; set; }
     private protected DaoConta DaoConta { get; set; }
+
+    private protected static DaoCliente daoCliente = new();
     public BoCliente(Cliente cliente) : base()
     {
         Cliente = cliente;
@@ -68,14 +70,12 @@ public class BoCliente : BoBase
     /// <exception cref="EmUsoException"></exception>
     public static async Task<int> CadastroAsync(Cliente cliente)
     {
-        using DaoCliente dao = new();
-
-        Cliente? busca = await dao.ExisteAsync(cliente.Email, cliente.CpfOuCnpj);
+        Cliente? busca = await daoCliente.ExisteAsync(cliente.Email, cliente.CpfOuCnpj);
 
         if (busca != null)
             throw new EmUsoException(busca.Email == cliente.Email ? nameof(cliente.Email) : nameof(cliente.CpfOuCnpj));
 
-        int id = await dao.InserirCliente(cliente);
+        int id = await daoCliente.InserirCliente(cliente);
 
         return id;
     }
@@ -87,9 +87,7 @@ public class BoCliente : BoBase
     /// <returns></returns>
     public static async Task<Cliente?> BuscarAsync(string email, bool privado = true)
     {
-        using DaoCliente dao = new();
-
-        Cliente? cliente = await dao.ExisteAsync(email, null, privado);
+        Cliente? cliente = await daoCliente.ExisteAsync(email, null, privado);
 
         return cliente;
     }
@@ -100,5 +98,6 @@ public class BoCliente : BoBase
         DaoCliente.Dispose();
         DaoConta.Dispose();
         GC.Collect();
+        GC.SuppressFinalize(this);
     }
 }
