@@ -18,7 +18,7 @@ public abstract class DaoBase : IDisposable
     private protected async Task<DataSet> ExecuteQueryAsync(string nomeProcedure, List<SqlParameter> parametros, bool transaction = false)
     {
         cmd.Parameters.Clear();
-        
+
         foreach (var item in parametros)
             cmd.Parameters.Add(item);
 
@@ -48,6 +48,10 @@ public abstract class DaoBase : IDisposable
                 await cmd.Transaction.RollbackAsync();
 
             throw;
+        }
+        finally
+        {
+            await conn.CloseAsync();
         }
 
         return dbSet;
@@ -82,6 +86,10 @@ public abstract class DaoBase : IDisposable
 
             throw;
         }
+        finally
+        {
+            await conn.CloseAsync();
+        }
     }
     private protected DataRow[] DataTableToRows(DataSet ds)
     {
@@ -102,9 +110,6 @@ public abstract class DaoBase : IDisposable
     {
         cmd.Dispose();
         conn.Dispose();
-
-        if (conn.State != ConnectionState.Closed)
-            conn.Close();
 
         SqlConnection.ClearPool(conn);
         GC.Collect();
