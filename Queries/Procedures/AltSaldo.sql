@@ -27,13 +27,19 @@ BEGIN
     IF @Tipo = 1 OR @Tipo = 2 OR @Tipo = 3
         BEGIN    
             DECLARE @Saldo MONEY;
+			DECLARE @Status TINYINT;
     
-            SELECT @Saldo = [Saldo] FROM [Conta]
+            SELECT TOP(1) @Saldo = [Saldo], @Status = [Status] FROM [Conta]
             WHERE [Id] = @De;
 
             IF @Saldo < @Valor
                 BEGIN
                     RAISERROR ('O valor de transferência deve ser maior que o valor saldo na conta!',10,1);
+                END
+
+            IF @Status > 49 AND (@Tipo = 1 OR @Tipo = 2)
+                BEGIN
+                    RAISERROR ('A conta se encontra bloqueada no momento!',10,1);
                 END
 
             /*

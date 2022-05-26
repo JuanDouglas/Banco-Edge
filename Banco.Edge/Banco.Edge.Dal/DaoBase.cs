@@ -18,7 +18,7 @@ public abstract class DaoBase : IDisposable
     private protected async Task<DataSet> ExecuteQueryAsync(string nomeProcedure, List<SqlParameter> parametros, bool transaction = false)
     {
         cmd.Parameters.Clear();
-
+        
         foreach (var item in parametros)
             cmd.Parameters.Add(item);
 

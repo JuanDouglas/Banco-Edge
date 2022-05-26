@@ -34,6 +34,7 @@ CREATE TABLE [Conta](
     [Dono] INTEGER NOT NULL,
     [Saldo] MONEY NULL DEFAULT 0.0,
     [Tipo] TINYINT NOT NULL DEFAULT 1,
+    [Status] TINYINT NOT NULL DEFAULT 0,
     [Criacao] DATETIME2 NOT NULL,
     FOREIGN KEY ([Dono]) REFERENCES [Cliente]([ID])
 );
@@ -51,9 +52,4 @@ CREATE TABLE [Transacao](
     FOREIGN KEY ([De]) REFERENCES [Conta]([Id]),
     FOREIGN KEY ([Para]) REFERENCES [Conta]([Id]),
     FOREIGN KEY ([Referencia]) REFERENCES [Transacao]([Id])
-);
-
-CREATE TABLE [TesteCarga](
-	[Id] INTEGER IDENTITY PRIMARY KEY NOT NULL, 
-	[Texto] VARCHAR(100)
 );
