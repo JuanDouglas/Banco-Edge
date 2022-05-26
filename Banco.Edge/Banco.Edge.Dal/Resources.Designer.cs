@@ -61,7 +61,7 @@ namespace Banco.Edge.Dal {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Server=.\SQLEXPRESS;Database=Banco Edge;Trusted_Connection=true;Max Pool Size =200;.
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Server=.\SQLEXPRESS;Database=Banco Edge;Trusted_Connection=true;.
         /// </summary>
         internal static string ConnectionString {
             get {

@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ConnectionString" xml:space="preserve">
-    <value>Server=.\SQLEXPRESS;Database=Banco Edge;Trusted_Connection=true;Max Pool Size =200;</value>
+    <value>Server=.\SQLEXPRESS;Database=Banco Edge;Trusted_Connection=true;</value>
   </data>
 </root>
