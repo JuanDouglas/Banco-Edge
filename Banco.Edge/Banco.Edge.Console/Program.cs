@@ -3,10 +3,11 @@ using Banco.Edge.Bll.Base;
 using Banco.Edge.Dml;
 using Newtonsoft.Json;
 
+namespace Banco.Edge.Cli;
 public static class Program
 {
     public static Cliente[] Clientes { get; set; }
-    static Random random = new();
+    static Random rd = Random.Shared;
     public static async Task Main(string[] args)
     {
         List<Cliente> clis = new();
@@ -21,7 +22,7 @@ public static class Program
 
             for (int i = 0; i < clientes.Length; i++)
             {
-                Cliente cli = (await BoCliente.BuscarAsync(clientes[i].Email, false)) ?? clientes[i];
+                Cliente cli = await BoCliente.BuscarAsync(clientes[i].Email, false) ?? clientes[i];
                 clientes[i] = cli;
 
                 using BoCliente boCliente = new(cli);
@@ -30,6 +31,17 @@ public static class Program
                     cli.Id = await BoCliente.CadastroAsync(cli);
 
                 await boCliente.ObterContasAsync();
+
+                Conta? conta = cli.Contas?.First();
+                if (conta == null)
+                    continue;
+
+                if (conta.Saldo < 1m)
+                {
+                    using BoConta boConta = new(conta, cli);
+                    decimal valor = rd.Next(10, 200);
+                    await boConta.DepositarAsync(valor);
+                }
             }
 
             clis.AddRange(clientes);
@@ -44,8 +56,14 @@ public static class Program
             int count = Clientes.Length / interacoes;
             int start = count * (i - 1);
 
-            Thread th = new(() => Interacoes(start, count));
+            Thread th = new(() => Transferencias(start, count));
             th.Start();
+
+            if (i % 3 == 0)
+            {
+                Thread depositos = new(() => Depositos());
+                depositos.Start();
+            }
         }
     }
 
@@ -76,7 +94,6 @@ public static class Program
         senhas = listSenhas.ToArray();
         return clientes.ToArray();
     }
-
     private static Cliente? ConverterCliente(JsonReader reader, out string senha)
     {
 #pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
@@ -130,8 +147,7 @@ public static class Program
 #pragma warning restore CS8604 // Possible null reference argument.
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
     }
-
-    public static async void Interacoes(int start, int count)
+    public static async void Transferencias(int start, int count)
     {
         Cliente[] clientes = new Cliente[count];
 
@@ -139,8 +155,8 @@ public static class Program
 
         while (true)
         {
-            int index = random.Next(clientes.Length);
-            int transacoes = random.Next(10);
+            int index = rd.Next(clientes.Length);
+            int transacoes = rd.Next(10);
 
             Conta? conta = clientes[index].Contas?.First();
             if (conta == null)
@@ -148,43 +164,43 @@ public static class Program
 
             using BoConta boContaPri = new(conta, clientes[index]);
 
-            if (conta.Saldo < 1.01m * transacoes)
-                await boContaPri.DepositarAsync(random.Next(100,1000));
-
             for (int x = 0; x < transacoes; x++)
             {
-                Conta? contaRecebe = clientes[random.Next(clientes.Length)].Contas?.First();
+                Conta? contaRecebe = clientes[rd.Next(clientes.Length)].Contas?.First();
 
-                if (conta == null)
+                decimal peso = rd.Next(10, 50);
+
+                if (conta == null ||
+                    conta.Saldo / peso < 1m)
                     continue;
 
-                decimal value = conta.Saldo / (transacoes + 1);
+                decimal value = conta.Saldo / peso;
 
                 await boContaPri.TransferirAsync(contaRecebe.Id, value);
             }
         }
     }
-
-    public static int NextInt32(this Random rng)
+    public static async void Depositos()
     {
-        int firstBits = rng.Next(0, 1 << 4) << 28;
-        int lastBits = rng.Next(0, 1 << 28);
-        return firstBits | lastBits;
-    }
+        while (true)
+        {
+            int index = rd.Next(Clientes.Length);
+            Cliente cliente = Clientes[index];
 
-    public static decimal NextDecimal(this Random rng, decimal? max = null, bool? negative = null)
-    {
-        byte escala = (byte)rng.Next(29);
-        bool assinatura = (negative == null) ? rng.Next(2) == 1 : negative ?? false;
-        decimal resultado = new decimal(rng.NextInt32(),
-                           rng.NextInt32(),
-                           rng.NextInt32(),
-                           assinatura,
-                           escala);
+            Conta? conta = cliente.Contas?.First();
 
-        while (resultado > max)
-            resultado /= 2m;
+            if (conta == null)
+                continue;
 
-        return resultado;
+            using BoConta boConta = new(conta, cliente);
+
+            decimal valorTotal = rd.Next((int)Math.Round(2d * 50 * 0.8), 1000) * 0.8m;
+            int depositos = rd.Next(50);
+
+            for (int i = 0; i < depositos; i++)
+                _ = await boConta.DepositarAsync(valorTotal / depositos);
+
+            Thread.Sleep(rd.Next(0, 10000));
+        }
     }
 }

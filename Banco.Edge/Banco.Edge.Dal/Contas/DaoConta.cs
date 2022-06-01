@@ -65,8 +65,9 @@ public sealed class DaoConta : DaoBase
             int id = row.Field<int>(nameof(Conta.Id));
             TipoConta tipo = (TipoConta)row.Field<byte>(nameof(Conta.Tipo));
             DateTime criacao = row.Field<DateTime>(nameof(Conta.Criacao));
+            StatusConta status = (StatusConta)row.Field<byte>(nameof(Conta.Status));
 
-            contas[i] = new(id, saldo, tipo, criacao);
+            contas[i] = new(id, saldo, tipo, criacao, status);
         }
 
         return contas;
