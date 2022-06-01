@@ -27,6 +27,7 @@ BEGIN
     IF @Tipo = 1 OR @Tipo = 2 OR @Tipo = 3
         BEGIN    
             DECLARE @Saldo MONEY;
+			DECLARE @Status TINYINT;
     
             SELECT TOP(1) @Saldo = [Saldo], @Status [Status] FROM [Conta]
             WHERE [Id] = @De;

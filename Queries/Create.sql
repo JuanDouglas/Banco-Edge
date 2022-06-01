@@ -53,8 +53,3 @@ CREATE TABLE [Transacao](
     FOREIGN KEY ([Para]) REFERENCES [Conta]([Id]),
     FOREIGN KEY ([Referencia]) REFERENCES [Transacao]([Id])
 );
-
-CREATE TABLE [TesteCarga](
-	[Id] INTEGER IDENTITY PRIMARY KEY NOT NULL, 
-	[Texto] VARCHAR(100)
-);

@@ -50,6 +50,10 @@ public abstract class DaoBase : IDisposable
 
             throw;
         }
+        finally
+        {
+            await conn.CloseAsync();
+        }
 
         return dbSet;
     }
@@ -83,6 +87,10 @@ public abstract class DaoBase : IDisposable
 
             throw;
         }
+        finally
+        {
+            await conn.CloseAsync();
+        }
     }
     private protected DataRow[] DataTableToRows(DataSet ds)
     {
@@ -103,9 +111,6 @@ public abstract class DaoBase : IDisposable
     {
         cmd.Dispose();
         conn.Dispose();
-
-        if (conn.State != ConnectionState.Closed)
-            conn.Close();
 
         SqlConnection.ClearPool(conn);
         GC.Collect();
