@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Banco.Edge.Bll", "Banco.Edg
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Banco.Edge.Dml", "Banco.Edge.Dml\Banco.Edge.Dml.csproj", "{5BA19418-1FF9-4DAC-9D67-1267F19B12A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Banco.Edge.Test", "Banco.Edge.Test\Banco.Edge.Test.csproj", "{83484BA0-96FB-492D-8EDD-3AC016605DBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Banco.Edge.Test", "Banco.Edge.Test\Banco.Edge.Test.csproj", "{83484BA0-96FB-492D-8EDD-3AC016605DBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Banco.Edge.Console", "Banco.Edge.Console\Banco.Edge.Console.csproj", "{F1DC1A9E-307A-4598-9279-1193C4B505E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Banco.Edge.Console", "Banco.Edge.Console\Banco.Edge.Console.csproj", "{F1DC1A9E-307A-4598-9279-1193C4B505E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Banco.Edge.Console.DataReader", "Banco.Edge.Console.DataReader\Banco.Edge.Console.DataReader.csproj", "{91EE0088-EC20-4F0F-A807-D05A380B0487}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{F1DC1A9E-307A-4598-9279-1193C4B505E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1DC1A9E-307A-4598-9279-1193C4B505E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1DC1A9E-307A-4598-9279-1193C4B505E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91EE0088-EC20-4F0F-A807-D05A380B0487}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91EE0088-EC20-4F0F-A807-D05A380B0487}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91EE0088-EC20-4F0F-A807-D05A380B0487}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91EE0088-EC20-4F0F-A807-D05A380B0487}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

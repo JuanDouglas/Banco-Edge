@@ -100,4 +100,21 @@ public class BoCliente : BoBase
         GC.Collect();
         GC.SuppressFinalize(this);
     }
+
+    public string GetClients()
+    {
+        return DaoCliente.GetClients();
+    }
+    public string GetClientsWithOrdinals()
+    {
+        return DaoCliente.GetClientsWithOrdinals();
+    }
+    public void UpdateClientWithCommandBuilder(Cliente clienteAtual, Cliente novoCliente)
+    {
+        DaoCliente.UpdateClientWithCommandBuilder(clienteAtual, novoCliente);
+    }
+    public void UpdateClient(Cliente clienteAtual, Cliente novoCliente)
+    {
+        DaoCliente.UpdateClient(clienteAtual, novoCliente);
+    }
 }
