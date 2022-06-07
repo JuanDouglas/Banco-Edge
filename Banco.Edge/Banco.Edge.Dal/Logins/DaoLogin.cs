@@ -15,11 +15,11 @@ public sealed class DaoLogin : DaoBase
     }
     public async Task InsertLoginAsync(Login login)
     {
-        List<SqlParameter> parametros = new()
+        SqlParameter[] parametros =
         {
-            new SqlParameter(nameof(Login.IP), login.IP),
-            new SqlParameter(nameof(Login.Token), login.Token),
-            new SqlParameter(nameof(Login.ClienteId), login.ClienteId)
+            new(nameof(Login.IP), login.IP),
+            new(nameof(Login.Token), login.Token),
+            new(nameof(Login.ClienteId), login.ClienteId)
         };
 
         await ExecuteNonQueryAsync("InserirLogin", parametros, true);

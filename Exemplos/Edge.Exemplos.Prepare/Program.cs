@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Data;
 using System.Data.SQLite;
 using System.Diagnostics;
 
@@ -18,7 +19,7 @@ using var con = new SQLiteConnection(cs);
 con.Open();
 
 using var cmd = new SQLiteCommand(insertCommand, con);
-stopwatch.Start();
+
 
 if (!created)
 {
@@ -28,24 +29,36 @@ if (!created)
         "[CPF] VARCHAR(15) UNIQUE NOT NULL," +
         "[Idade] INTEGER NOT NULL DEFAULT 1," +
         "[Celular] VARCHAR(16) NOT NULL);";
-    cmd.ExecuteScalar();
+    cmd.ExecuteNonQuery();
 
     cmd.CommandText = insertCommand;
 }
 
-foreach (var carro in pessoas)
+stopwatch.Start();
+for (int i = 0; i < pessoas.Length; i++)
 {
-    cmd.Parameters.AddWithValue("@nome", carro.Nome);
-    cmd.Parameters.AddWithValue("@email", carro.Email);
-    cmd.Parameters.AddWithValue("@cpf", carro.CPF);
-    cmd.Parameters.AddWithValue("@celular", carro.Celular);
-    cmd.Parameters.AddWithValue("@idade", carro.Idade);
-    cmd.ExecuteNonQuery();
+    Pessoa? carro = pessoas[i];
+    if (i < 1)
+    {
+        cmd.Parameters.Add(new(nameof(carro.Nome), DbType.StringFixedLength, 500));
+        cmd.Parameters.Add(new(nameof(carro.Email), DbType.StringFixedLength, 500));
+        cmd.Parameters.Add(new(nameof(carro.CPF), DbType.StringFixedLength, 15));
+        cmd.Parameters.Add(new(nameof(carro.Celular), DbType.StringFixedLength, 16));
+        cmd.Parameters.Add(new(nameof(carro.Idade), DbType.Int16, 0));
+        await cmd.PrepareAsync();
+    }
+
+    cmd.Parameters[0].Value = carro.Nome;
+    cmd.Parameters[1].Value = carro.Email;
+    cmd.Parameters[2].Value = carro.CPF;
+    cmd.Parameters[3].Value = carro.Celular;
+    cmd.Parameters[4].Value = carro.Idade;
+
+    await cmd.ExecuteNonQueryAsync();
 }
 
 stopwatch.Stop();
 Console.WriteLine($"Tempo de Inserção: {stopwatch.Elapsed}");
-
 
 class Pessoa
 {

@@ -19,8 +19,7 @@ public sealed class DaoCliente : DaoBase
 
     public async Task ExcluirAsync(int id)
     {
-        List<SqlParameter> parametros = new()
-        {
+        SqlParameter[] parametros = {
             new SqlParameter("IdCliente", id)
         };
 
@@ -29,14 +28,13 @@ public sealed class DaoCliente : DaoBase
 
     public async Task<int> InserirCliente(Cliente cliente)
     {
-        List<SqlParameter> parameters = new()
-        {
-            new SqlParameter(nameof(Cliente.Nome), cliente.Nome),
-            new SqlParameter(nameof(Cliente.Email), cliente.Email),
-            new SqlParameter(nameof(Cliente.Senha), cliente.Senha),
-            new SqlParameter(nameof(Cliente.Chave), cliente.Chave),
-            new SqlParameter(nameof(Cliente.Telefone), cliente.Telefone),
-            new SqlParameter(nameof(Cliente.CpfOuCnpj), cliente.CpfOuCnpj)
+        SqlParameter[] parameters = {
+            new(nameof(Cliente.Nome),SqlDbType.VarChar,500,cliente.Nome),
+            new(nameof(Cliente.Email),SqlDbType.VarChar,500, cliente.Email),
+            new(nameof(Cliente.Senha),SqlDbType.VarChar,96, cliente.Senha),
+            new(nameof(Cliente.Chave),SqlDbType.VarChar,128, cliente.Chave),
+            new(nameof(Cliente.Telefone),SqlDbType.VarChar,16, cliente.Telefone),
+            new(nameof(Cliente.CpfOuCnpj),SqlDbType.VarChar,20, cliente.CpfOuCnpj)
         };
 
         DataSet dbSet = await ExecuteQueryAsync("InserirCliente", parameters, true);
@@ -58,8 +56,7 @@ public sealed class DaoCliente : DaoBase
         int skip = 0,
         bool ocultarSensiveis = true)
     {
-        List<SqlParameter> parameters = new()
-        {
+        SqlParameter[] parameters = {
             new("Skip", skip),
             new("Take", take),
             new(nameof(Cliente.Id), id),

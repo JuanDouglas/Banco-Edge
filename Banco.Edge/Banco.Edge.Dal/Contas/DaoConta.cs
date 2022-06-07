@@ -8,14 +8,19 @@ public sealed class DaoConta : DaoBase
 {
     public async Task<Conta[]?> BuscarContasAsync(int donoId, TipoConta? tipo = null, int pegar = 3)
     {
-        List<SqlParameter> parametros = new()
+        SqlParameter[] parametros =
         {
-            new SqlParameter("DonoId", donoId),
-            new SqlParameter("Take", pegar)
+            new("DonoId", donoId),
+            new("Take", pegar)
         };
 
         if (tipo != null)
-            parametros.Add(new(nameof(Conta.Tipo), (byte)(tipo ?? TipoConta.Corrente)));
+        {
+            SqlParameter[] aux = new SqlParameter[parametros.Length + 1];
+            aux[0] = new(nameof(Conta.Tipo), (byte)(tipo ?? TipoConta.Corrente));
+            parametros.CopyTo(aux, 1);
+            parametros = aux;
+        }
 
         DataSet data = await ExecuteQueryAsync("BuscarContas", parametros);
         DataRow[] rows = DataTableToRows(data);
@@ -25,10 +30,10 @@ public sealed class DaoConta : DaoBase
 
     public async Task CriarConta(TipoConta tipo, int donoId)
     {
-        List<SqlParameter> parametros = new()
-        {
-            new SqlParameter("DonoId", donoId),
-            new SqlParameter(nameof(Conta.Tipo), (byte)tipo)
+        SqlParameter[] parametros =
+         {
+            new("DonoId", donoId),
+            new(nameof(Conta.Tipo), (byte)tipo)
         };
 
         await ExecuteNonQueryAsync("InserirConta", parametros);
@@ -36,12 +41,12 @@ public sealed class DaoConta : DaoBase
 
     public async Task<Transacao> NovaTransacaoAsync(TipoTransacao tipo, decimal valor, string descricao, int contaId, int? deId, int? referenciaId = null)
     {
-        List<SqlParameter> parametros = new()
+        SqlParameter[] parametros =
         {
-            new SqlParameter("Tipo", (byte)tipo),
-            new SqlParameter("Valor", valor),
-            new SqlParameter("Descricao", descricao),
-            new SqlParameter("Para", contaId)
+            new("Tipo", (byte)tipo),
+            new("Valor", valor),
+            new("Descricao", descricao),
+            new("Para", contaId)
         };
 
         DataSet dataSet = await ExecuteQueryAsync("NovaTransacao", parametros);
