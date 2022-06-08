@@ -51,7 +51,6 @@ public static class Program
             clis.AddRange(clientes);
         }
 
-
     }
 
     private static async Task<byte[][]> GetImagens(string path)

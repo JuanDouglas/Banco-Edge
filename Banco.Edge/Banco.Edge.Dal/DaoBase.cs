@@ -23,6 +23,7 @@ public abstract class DaoBase : IDisposable
         int rows = 0;
         Stopwatch stopwatch = new();
 
+        cmd.Parameters.Clear();
         foreach (var item in parametros)
             cmd.Parameters.Add(item);
 

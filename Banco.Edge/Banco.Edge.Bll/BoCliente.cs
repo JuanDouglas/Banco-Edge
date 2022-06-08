@@ -107,7 +107,7 @@ public class BoCliente : BoBase
         return cliente;
     }
 
-    public static async Task<Cliente[]?> ObterClientes(int idIncial, int maximo = 200)
+    public static async Task<Cliente[]?> ListarClientes(int idIncial, int maximo = 200)
         => await daoCliente.ListarClientes(idIncial, maximo);
 
     #endregion

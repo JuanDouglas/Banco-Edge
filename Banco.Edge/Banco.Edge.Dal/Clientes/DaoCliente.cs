@@ -21,8 +21,8 @@ public sealed class DaoCliente : DaoBase
     public async Task<Cliente[]?> ListarClientes(int idInicial, int maximo = 200)
     {
         SqlParameter[] parametros = {
-            new SqlParameter("idInicial", idInicial),
-            new SqlParameter("maximo", maximo)
+            new SqlParameter("IdInicial", idInicial),
+            new SqlParameter("Maximo", maximo)
         };
 
         DataSet dbSet = await ExecuteQueryAsync("ListarClientes", parametros, true);
@@ -45,17 +45,17 @@ public sealed class DaoCliente : DaoBase
 
     public async Task<int> InserirCliente(Cliente cliente)
     {
-        SqlParameter[] parameters = {
-            new(nameof(Cliente.Nome),SqlDbType.VarChar,500, cliente.Nome),
-            new(nameof(Cliente.Email),SqlDbType.VarChar,500, cliente.Email),
-            new(nameof(Cliente.Senha),SqlDbType.VarChar,96, cliente.Senha),
-            new(nameof(Cliente.Chave),SqlDbType.VarChar,128, cliente.Chave),
-            new(nameof(Cliente.Telefone),SqlDbType.VarChar,16, cliente.Telefone),
-            new(nameof(Cliente.CpfOuCnpj),SqlDbType.VarChar,20, cliente.CpfOuCnpj),
-            new(nameof(Cliente.Foto),SqlDbType.VarBinary,1000) {Value = cliente.Foto}
+        SqlParameter[] parametros = {
+            new(nameof(Cliente.Nome),SqlDbType.VarChar,100, cliente.Nome){ Value = cliente.Nome },
+            new(nameof(Cliente.Email),SqlDbType.VarChar,500, cliente.Email){ Value = cliente.Email },
+            new(nameof(Cliente.Senha),SqlDbType.VarChar,90, cliente.Senha){ Value = cliente.Senha },
+            new(nameof(Cliente.Chave),SqlDbType.VarChar,96, cliente.Chave) { Value = cliente.Chave },
+            new(nameof(Cliente.Telefone),SqlDbType.VarChar,15, cliente.Telefone) { Value = cliente.Telefone },
+            new(nameof(Cliente.CpfOuCnpj),SqlDbType.VarChar,20, cliente.CpfOuCnpj){ Value = cliente.CpfOuCnpj },
+            new(nameof(Cliente.Foto),SqlDbType.VarBinary,cliente.Foto?.Length ?? 0) {Value = cliente.Foto}
         };
 
-        DataSet dbSet = await ExecuteQueryAsync("InserirCliente", parameters, true);
+        DataSet dbSet = await ExecuteQueryAsync("InserirCliente", parametros, true);
         DataRowCollection rows = dbSet.Tables[0].Rows;
 
         int id = -1;
