@@ -1,25 +1,28 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 
 namespace Banco.Edge.Dal;
 public abstract class DaoBase : IDisposable
 {
     private protected readonly SqlConnection conn;
     private protected readonly SqlCommand cmd;
+    private protected event EventHandler<QueryEndEventArgs> QueryExecuted;
     public DaoBase()
     {
-        cmd = new();
         conn = new()
         {
             ConnectionString = Resources.ConnectionString
         };
+        cmd = new();
+        QueryExecuted += QueryEndLog;
         conn.Open();
     }
     private protected async Task<DataSet> ExecuteQueryAsync(string nomeProcedure, SqlParameter[] parametros, bool transaction = false)
     {
-        SqlCommand cmd = new();
-        using SqlConnection conn = new(Resources.ConnectionString);
-        
+        int rows = 0;
+        Stopwatch stopwatch = new();
+
         foreach (var item in parametros)
             cmd.Parameters.Add(item);
 
@@ -38,7 +41,8 @@ public abstract class DaoBase : IDisposable
 
         try
         {
-            adapter.Fill(dbSet);
+            stopwatch.Start();
+            rows = adapter.Fill(dbSet);
 
             if (transaction)
                 await cmd.Transaction.CommitAsync();
@@ -52,9 +56,11 @@ public abstract class DaoBase : IDisposable
         }
         finally
         {
+            stopwatch.Stop();
             await conn.CloseAsync();
         }
 
+        QueryExecuted.Invoke(this, new(stopwatch, rows));
         return dbSet;
     }
     private protected async Task ExecuteNonQueryAsync(string nomeProcedure, SqlParameter[] parametros, bool transaction = false)
@@ -107,6 +113,11 @@ public abstract class DaoBase : IDisposable
 
         return rows.ToArray();
     }
+
+    private protected virtual void QueryEndLog(object? sender, EventArgs args)
+    {
+    }
+   
     public void Dispose()
     {
         cmd.Dispose();
@@ -119,5 +130,15 @@ public abstract class DaoBase : IDisposable
             conn.ConnectionString = Resources.ConnectionString;
 
         GC.SuppressFinalize(this);
+    }
+    public class QueryEndEventArgs : EventArgs
+    {  
+        public TimeSpan Elapsed { get; }
+        public int Rows { get; set; }
+        public QueryEndEventArgs(Stopwatch stopwatch, int rows) : base()
+        {
+            Elapsed = stopwatch.Elapsed;
+            Rows = rows;
+        }
     }
 }
