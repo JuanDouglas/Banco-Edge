@@ -119,4 +119,20 @@ public class BoCliente : BoBase
         GC.Collect();
         GC.SuppressFinalize(this);
     }
+
+    public void RecuperarClientes(string sql, int qtd)
+    {
+        daoCliente.RecuperarClientes(sql, qtd);
+    }
+
+    public void RecuperarClientesSpLiteral(string sp, int qtd)
+    {
+        daoCliente.RecuperarClientesSpLiteral(sp, qtd);
+    }
+
+    public void RecuperarClientesSp(string sp, int qtd)
+    {
+        daoCliente.RecuperarClientesSp(sp, qtd);
+    }
+
 }

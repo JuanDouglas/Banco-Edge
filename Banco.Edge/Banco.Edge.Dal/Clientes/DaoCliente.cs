@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text;
 
 namespace Banco.Edge.Dal.Clientes;
 
@@ -119,4 +120,110 @@ public sealed class DaoCliente : DaoBase
 
         return clientes;
     }
+
+    public void RecuperarClientes(string sqlText, int qtd)
+    {
+        StringBuilder sb = new StringBuilder();
+
+        SqlConnection conn = new SqlConnection(Resources.ConnectionString);
+        SqlCommand cmd = new SqlCommand(sqlText, conn);
+        conn.Open();
+
+        for (int i = 0; i < qtd; i++)
+        {
+            SqlDataAdapter adapter = new(cmd);
+            DataSet dbSet = new();
+
+            try
+            {
+                adapter.Fill(dbSet);
+                /*foreach (DataRow pRow in dbSet.Tables[0].Rows)
+                {
+                    Console.WriteLine(pRow["Nome"]);
+                }*/
+            }
+            catch
+            {
+                Console.WriteLine("Exception!");
+            }
+        }
+
+
+        conn.Close();
+
+    }
+
+    public async void RecuperarClientesSpLiteral(string sp, int qtd)
+    {
+        cmd.Parameters.Clear();
+
+        if (conn.State == ConnectionState.Closed)
+            await conn.OpenAsync();
+
+        cmd.CommandText = sp;
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Connection = conn;
+
+        for (int i = 0; i < qtd; i++)
+        {
+            SqlDataAdapter adapter = new(cmd);
+            DataSet dbSet = new();
+
+            try
+            {
+                adapter.Fill(dbSet);
+
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                await conn.CloseAsync();
+            }
+        }
+
+    }
+
+    public async void RecuperarClientesSp(string sp, int qtd)
+    {
+        cmd.Parameters.Clear();
+
+        List<SqlParameter> parameters = new(){
+            new("Skip", 0),
+            new("Take", 1000),
+        };
+        cmd.Parameters.AddRange(parameters.ToArray());
+
+        /*parameters.Add(new(nameof(Cliente.Id), id ?? 0));
+        parameters.Add(new(nameof(Cliente.Email), email));
+        parameters.Add(new(nameof(Cliente.CpfOuCnpj), cpfOuCnpj));*/
+
+        if (conn.State == ConnectionState.Closed)
+            await conn.OpenAsync();
+
+        cmd.CommandText = "BuscaCliente";
+        cmd.CommandType = CommandType.StoredProcedure;
+        cmd.Connection = conn;
+        for (int i = 0; i < qtd; i++)
+        {
+            SqlDataAdapter adapter = new(cmd);
+            DataSet dbSet = new();
+
+            try
+            {
+                adapter.Fill(dbSet);
+
+            }
+            catch (Exception ex)
+            {
+            }
+            finally
+            {
+                await conn.CloseAsync();
+            }
+        }
+
+    }
+
 }
