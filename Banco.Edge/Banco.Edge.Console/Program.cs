@@ -7,13 +7,17 @@ namespace Banco.Edge.Cli;
 public static class Program
 {
     public static Cliente[] Clientes { get; set; }
+    static byte[][]? imagens;
     static Random rd = Random.Shared;
     public static async Task Main(string[] args)
     {
         List<Cliente> clis = new();
         string path = Environment.CurrentDirectory;
         path = Path.Combine(path, "Pessoas");
+
         var files = Directory.GetFiles(path);
+        imagens = await GetImagens(path);
+
         Console.WriteLine($"Carregando clientes de {files.Length} arquivos.");
 
         foreach (var file in files)
@@ -67,6 +71,19 @@ public static class Program
         }
     }
 
+    private static async Task<byte[][]> GetImagens(string path)
+    {
+        var files = Directory.GetFiles(Path.Combine(path, "Fotos"));
+
+        List<byte[]> imagens = new();
+        foreach (var item in files)
+        {
+            imagens.Add(await File.ReadAllBytesAsync(item));
+        }
+
+        return imagens.ToArray();
+    }
+
     public static Cliente[] ObterClientes(string file, out string[] senhas)
     {
         List<Cliente> clientes = new();
@@ -86,6 +103,8 @@ public static class Program
 
             if (cliente != null)
             {
+                imagens ??= new byte[][] { Array.Empty<byte>() };
+                cliente.Foto = imagens[rd.Next(0, imagens.Length)];
                 clientes.Add(cliente);
                 listSenhas.Add(senha);
             }

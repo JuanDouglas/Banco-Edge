@@ -78,6 +78,18 @@
 		<None Update="Pessoas\data %2823%29.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Update="Pessoas\Fotos\perfil %281%29.jpeg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Pessoas\Fotos\perfil %282%29.jpeg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Pessoas\Fotos\perfil %283%29.jpeg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Pessoas\Fotos\perfil.jpg">
+		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
 	<PropertyGroup>

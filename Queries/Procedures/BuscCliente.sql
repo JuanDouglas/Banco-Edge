@@ -4,7 +4,7 @@ GO
 CREATE PROC BuscaCliente
 @Skip INTEGER,
 @Take INTEGER,
-@Id INTEGER = NULL,
+@Id INT = NULL,
 @Email VARCHAR(100) = NULL,
 @CpfOuCnpj VARCHAR(14) = NULL
 AS

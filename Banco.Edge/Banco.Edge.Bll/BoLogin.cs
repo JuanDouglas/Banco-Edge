@@ -11,7 +11,7 @@ public class BoLogin : BoBase
 {
     public DaoLogin DaoLogin { get; set; }
 
-    public BoLogin()
+    public BoLogin() : base()
     {
         DaoLogin = new();
     }

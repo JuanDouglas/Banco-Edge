@@ -7,7 +7,7 @@ public abstract class DaoBase : IDisposable
 {
     private protected readonly SqlConnection conn;
     private protected readonly SqlCommand cmd;
-    private protected event EventHandler<QueryEndEventArgs> QueryExecuted;
+    public virtual event EventHandler<QueryEndEventArgs> QueryExecuted;
     public DaoBase()
     {
         conn = new()

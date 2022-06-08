@@ -17,7 +17,7 @@ CREATE TABLE [Cliente](
     [Senha] VARCHAR(90) NOT NULL,
     [Chave] VARCHAR(96) UNIQUE NOT NULL,
     [Cadastro] DATETIME2 NOT NULL,
-    [Foto] VARBINARY(10000) NULL
+    [Foto] VARBINARY(MAX) NULL
 );
 
 CREATE TABLE [Login](

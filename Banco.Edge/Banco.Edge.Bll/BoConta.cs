@@ -15,7 +15,7 @@ public class BoConta : BoBase
     public Cliente Cliente { get; set; }
     public Conta Conta { get; set; }
     private protected DaoConta DaoConta { get; set; }
-    public BoConta(Conta conta, Cliente cliente)
+    public BoConta(Conta conta, Cliente cliente) : base()
     {
         DaoConta = new();
         Cliente = cliente;

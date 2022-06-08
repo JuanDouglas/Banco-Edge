@@ -1,4 +1,5 @@
 ﻿using Banco.Edge.Dml;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 
@@ -57,15 +58,21 @@ public sealed class DaoCliente : DaoBase
         int skip = 0,
         bool ocultarSensiveis = true)
     {
-        SqlParameter[] parameters = {
+        List<SqlParameter> parameters = new(){
             new("Skip", skip),
             new("Take", take),
-            new(nameof(Cliente.Id), id),
-            new(nameof(Cliente.Email), email),
-            new(nameof(Cliente.CpfOuCnpj), cpfOuCnpj)
         };
 
-        DataSet ds = await ExecuteQueryAsync("BuscaCliente", parameters);
+        if (id != null)
+            parameters.Add(new(nameof(Cliente.Id), id ?? 0));
+
+        if (email != null)
+            parameters.Add(new(nameof(Cliente.Email), email));
+
+        if (cpfOuCnpj != null)
+            parameters.Add(new(nameof(Cliente.CpfOuCnpj), cpfOuCnpj));
+
+        DataSet ds = await ExecuteQueryAsync("BuscaCliente", parameters.ToArray());
 
         DataRow[] rows = DataTableToRows(ds);
 

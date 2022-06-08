@@ -4,6 +4,7 @@ using Banco.Edge.Dal.Clientes;
 using Banco.Edge.Bll.Exceptions;
 using Banco.Edge.Bll.Base;
 using Banco.Edge.Dal.Contas;
+using static Banco.Edge.Dal.DaoBase;
 
 namespace Banco.Edge.Bll;
 
@@ -12,8 +13,21 @@ public class BoCliente : BoBase
     public Cliente Cliente { get; set; }
     private protected DaoCliente DaoCliente { get; set; }
     private protected DaoConta DaoConta { get; set; }
+    private protected static DaoCliente daoCliente
+    {
+        get
+        {
+            if (_daoCliente == null) {
 
-    private protected static DaoCliente daoCliente = new();
+                _daoCliente = new();
+                _daoCliente.QueryExecuted += (object? sender, QueryEndEventArgs args) => { };
+            }
+            
+
+            return _daoCliente;
+        }
+    }
+    private static DaoCliente? _daoCliente;
     public BoCliente(Cliente cliente) : base()
     {
         Cliente = cliente;
@@ -76,7 +90,7 @@ public class BoCliente : BoBase
             throw new EmUsoException(busca.Email == cliente.Email ? nameof(cliente.Email) : nameof(cliente.CpfOuCnpj));
 
         int id = await daoCliente.InserirCliente(cliente);
-
+      
         return id;
     }
 

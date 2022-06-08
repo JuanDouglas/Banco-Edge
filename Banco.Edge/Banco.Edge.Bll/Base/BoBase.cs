@@ -6,6 +6,12 @@ namespace Banco.Edge.Bll.Base;
 public abstract class BoBase : IDisposable
 {
     public event EventHandler<QueryEndEventArgs> TaskExecuted;
+    private int taskCount;
+    private TimeSpan totalElapsed;
+    private protected BoBase()
+    {
+        TaskExecuted += EndTaskExecution;
+    }
     /// <summary>
     /// Gera um token com o tamanho especificado.
     /// </summary>
@@ -44,6 +50,10 @@ public abstract class BoBase : IDisposable
 
         return resultado;
     }
-
+    private void EndTaskExecution(object? sender, QueryEndEventArgs args)
+    {
+        taskCount++;
+        totalElapsed += args.Elapsed;
+    }
     public abstract void Dispose();
 }
