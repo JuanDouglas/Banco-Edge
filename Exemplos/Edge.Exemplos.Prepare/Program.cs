@@ -44,14 +44,16 @@ public static class Program
 
         }
 
-        const string insertCommand = "INSERT INTO [Pessoas](Nome,Email,CPF,Celular,Idade) VALUES(@nome,@email,@cpf,@celular,@idade)";
-        cmd.CommandText = insertCommand;
+        //const string insertCommand = "INSERT INTO [Pessoas](Nome,Email,CPF,Celular,Idade) VALUES(@nome,@email,@cpf,@celular,@idade)";
+        //cmd.CommandText = insertCommand;
+        const string updateCommand = "UPDATE [Pessoas] SET Nome=@nome and Email=@email and CPF=@cpf and Celular=@celular and Idade=@idade WHERE Nome=@nome";
+        cmd.CommandText = updateCommand;
 
         stopwatch.Start();
         if (prepare)
             cmd.Prepare();
 
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 3; i++)
         {
             foreach (var pessoa in pessoas)
             {
@@ -77,3 +79,4 @@ class Pessoa
     public string Celular { get; set; }
     public int Idade { get; set; }
 }
+
