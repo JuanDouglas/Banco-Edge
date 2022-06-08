@@ -58,4 +58,22 @@ public class BoConta : BoBase
         GC.Collect();
         GC.SuppressFinalize(this);
     }
+
+    public string GetContas()
+    {
+        return DaoConta.GetContas();
+    }
+    public string GetContasWithOrdinals()
+    {
+        return DaoConta.GetContasWithOrdinals();
+    }
+    public void UpdateContaWithCommandBuilder(Conta contaAtual, Conta novaConta)
+    {
+        DaoConta.UpdateContaWithCommandBuilder(contaAtual, novaConta);
+    }
+    public void UpdateConta(Conta contaAtual, Conta novaConta)
+    {
+        DaoConta.UpdateConta(contaAtual, novaConta);
+    }
+
 }

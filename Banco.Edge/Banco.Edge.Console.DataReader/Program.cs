@@ -11,19 +11,28 @@ public static class Program
     {
         Stopwatch stopwatch1 = new();
         Stopwatch stopwatch2 = new();
-        using BoCliente boCliente = new(null);
-        /*stopwatch1.Start();
+        /*using BoCliente boCliente = new(null);
+        stopwatch1.Start();
         string clientes = boCliente.GetClients();
         stopwatch1.Stop();
         stopwatch2.Start();
         clientes = boCliente.GetClientsWithOrdinals();
-        stopwatch2.Stop();
-        
-        Console.WriteLine($"Tempo de Consulta (sem ordinais): {stopwatch1.Elapsed}");
-        Console.WriteLine($"Tempo de Consulta (com ordinais): {stopwatch2.Elapsed}");
+        stopwatch2.Stop();*/
         //Console.WriteLine(clientes);*/
-        
-        Cliente clienteAtual = new Cliente(1, "Felipe", "(88) 88888 8888", "felipe.pontes@edge.ufal.br", "111.222.333-44", "123456", "chave1");
+
+        using BoConta boConta = new(null, null);
+        /*stopwatch1.Start();
+        string contas = boConta.GetContas();
+        stopwatch1.Stop();
+        Console.WriteLine($"Tempo de Consulta (sem ordinais): {stopwatch1.Elapsed}");
+        stopwatch2.Start();
+        contas = boConta.GetContasWithOrdinals();
+        stopwatch2.Stop();
+        Console.WriteLine($"Tempo de Consulta (com ordinais): {stopwatch2.Elapsed}");*/
+
+
+
+        /*Cliente clienteAtual = new Cliente(1, "Felipe", "(88) 88888 8888", "felipe.pontes@edge.ufal.br", "111.222.333-44", "123456", "chave1");
         Cliente novoCliente = new Cliente(1, "Felipe", "(99) 99999 9999", "felipepontes@gmail.com", "111.222.333-44", "654321", "chave2");
         Stopwatch stopwatch3 = new();
         Stopwatch stopwatch4 = new();
@@ -32,6 +41,20 @@ public static class Program
         stopwatch3.Stop();
         stopwatch4.Start();
         boCliente.UpdateClient(clienteAtual, novoCliente);
+        stopwatch4.Stop();
+        Console.WriteLine($"Tempo de Update (com command builder): {stopwatch3.Elapsed}");
+        Console.WriteLine($"Tempo de Update (sem command builder): {stopwatch4.Elapsed}");*/
+
+        var criacao = DateTime.Now;
+        Conta contaAtual = new Conta(1, 1, Dml.Enums.TipoConta.Corrente, criacao, Dml.Enums.StatusConta.Ativa);
+        Conta novaConta = new Conta(1, 2, Dml.Enums.TipoConta.Poupanca, criacao, Dml.Enums.StatusConta.Bloqueada);
+        Stopwatch stopwatch3 = new();
+        Stopwatch stopwatch4 = new();
+        stopwatch3.Start();
+        boConta.UpdateContaWithCommandBuilder(contaAtual, novaConta);
+        stopwatch3.Stop();
+        stopwatch4.Start();
+        boConta.UpdateConta(contaAtual, novaConta);
         stopwatch4.Stop();
         Console.WriteLine($"Tempo de Update (com command builder): {stopwatch3.Elapsed}");
         Console.WriteLine($"Tempo de Update (sem command builder): {stopwatch4.Elapsed}");
