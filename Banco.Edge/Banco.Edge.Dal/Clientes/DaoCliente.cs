@@ -29,12 +29,13 @@ public sealed class DaoCliente : DaoBase
     public async Task<int> InserirCliente(Cliente cliente)
     {
         SqlParameter[] parameters = {
-            new(nameof(Cliente.Nome),SqlDbType.VarChar,500,cliente.Nome),
+            new(nameof(Cliente.Nome),SqlDbType.VarChar,500, cliente.Nome),
             new(nameof(Cliente.Email),SqlDbType.VarChar,500, cliente.Email),
             new(nameof(Cliente.Senha),SqlDbType.VarChar,96, cliente.Senha),
             new(nameof(Cliente.Chave),SqlDbType.VarChar,128, cliente.Chave),
             new(nameof(Cliente.Telefone),SqlDbType.VarChar,16, cliente.Telefone),
-            new(nameof(Cliente.CpfOuCnpj),SqlDbType.VarChar,20, cliente.CpfOuCnpj)
+            new(nameof(Cliente.CpfOuCnpj),SqlDbType.VarChar,20, cliente.CpfOuCnpj),
+            new(nameof(Cliente.Foto),SqlDbType.VarBinary,1000) {Value = cliente.Foto}
         };
 
         DataSet dbSet = await ExecuteQueryAsync("InserirCliente", parameters, true);
@@ -85,8 +86,12 @@ public sealed class DaoCliente : DaoBase
             string telefone = row.Field<string>(nameof(Cliente.Telefone)) ?? "+00 (00) 00000-0000";
             string chave = row.Field<string>(nameof(Cliente.Chave)) ?? string.Empty;
             string senha = row.Field<string>(nameof(Cliente.Senha)) ?? string.Empty;
+            byte[]? foto = row.Field<byte[]>(nameof(Cliente.Foto));
 
-            clientes[i] = new(id, nome, telefone, email, cpfOuCnpj, senha, chave, ocultarSensiveis);
+            clientes[i] = new(id, nome, telefone, email, cpfOuCnpj, senha, chave, ocultarSensiveis)
+            {
+                Foto = foto
+            };
         }
 
         return clientes;

@@ -1,10 +1,11 @@
 ﻿using System.Data.SqlClient;
+using static Banco.Edge.Dal.DaoBase;
 
 namespace Banco.Edge.Bll.Base;
 
 public abstract class BoBase : IDisposable
 {
-
+    public event EventHandler<QueryEndEventArgs> TaskExecuted;
     /// <summary>
     /// Gera um token com o tamanho especificado.
     /// </summary>

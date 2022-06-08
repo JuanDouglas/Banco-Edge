@@ -25,6 +25,7 @@ public class Cliente
                 .ToArray());
     }
     private string? _cpfOuCnpj;
+    public byte[]? Foto { get; set; }
     public Conta[]? Contas { get; set; }
 
     public Cliente(int id, string nome, string telefone, string email, string cpfOuCnpj, string senha, string chave, bool privado)
@@ -50,5 +51,6 @@ public class Cliente
     public Cliente(int id, string name, string telefone, string email, string cpfOuCnpj, string senha, string chave)
         : this(id, name, telefone, email, cpfOuCnpj, BCrypt.Net.BCrypt.HashPassword(senha), chave, false)
     {
+
     }
 }

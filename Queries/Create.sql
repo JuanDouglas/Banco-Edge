@@ -16,7 +16,8 @@ CREATE TABLE [Cliente](
     [CpfOuCnpj] VARCHAR(14) UNIQUE NOT NULL,
     [Senha] VARCHAR(90) NOT NULL,
     [Chave] VARCHAR(96) UNIQUE NOT NULL,
-    [Cadastro] DATETIME2 NOT NULL
+    [Cadastro] DATETIME2 NOT NULL,
+    [Foto] VARBINARY(10000) NULL
 );
 
 CREATE TABLE [Login](

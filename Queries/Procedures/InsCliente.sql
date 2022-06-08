@@ -7,13 +7,14 @@ CREATE PROC InserirCliente
 @Telefone VARCHAR(15),
 @CpfOuCnpj VARCHAR(14),
 @Senha VARCHAR(90),
-@Chave VARCHAR(96)
+@Chave VARCHAR(96),
+@Foto VARBINARY(10000) = NULL 
 AS
 BEGIN
 	DECLARE @Id INTEGER;
 	
-	INSERT INTO [Cliente]([Nome], [Telefone], [Email], [CpfOuCnpj], [Senha],[Chave],[Cadastro]) 
-	VALUES (@Nome, @Telefone, @Email, @CpfOuCnpj, @Senha, @Chave, GETDATE())
+	INSERT INTO [Cliente]([Nome], [Telefone], [Email], [CpfOuCnpj], [Senha], [Chave], [Cadastro], [Foto]) 
+	VALUES (@Nome, @Telefone, @Email, @CpfOuCnpj, @Senha, @Chave, GETDATE(), @Foto)
 
 	SET @Id = SCOPE_IDENTITY();
 	
