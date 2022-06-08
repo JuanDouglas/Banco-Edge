@@ -51,24 +51,7 @@ public static class Program
             clis.AddRange(clientes);
         }
 
-        Clientes = clis.ToArray();
-        Console.Write("Digite o numero de interações que deseja fazer: ");
-        _ = int.TryParse(Console.ReadLine(), out int interacoes);
 
-        for (int i = 1; i <= interacoes; i++)
-        {
-            int count = Clientes.Length / interacoes;
-            int start = count * (i - 1);
-
-            Thread th = new(() => Transferencias(start, count));
-            th.Start();
-
-            if (i % 3 == 0)
-            {
-                Thread depositos = new(() => Depositos());
-                depositos.Start();
-            }
-        }
     }
 
     private static async Task<byte[][]> GetImagens(string path)
@@ -165,61 +148,5 @@ public static class Program
         return new(0, nome, celular, email, cpf, senha, chave);
 #pragma warning restore CS8604 // Possible null reference argument.
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
-    }
-    public static async void Transferencias(int start, int count)
-    {
-        Cliente[] clientes = new Cliente[count];
-
-        Array.Copy(Clientes, start, clientes, 0, count);
-
-        while (true)
-        {
-            int index = rd.Next(clientes.Length);
-            int transacoes = rd.Next(10);
-
-            Conta? conta = clientes[index].Contas?.First();
-            if (conta == null)
-                continue;
-
-            using BoConta boContaPri = new(conta, clientes[index]);
-
-            for (int x = 0; x < transacoes; x++)
-            {
-                Conta? contaRecebe = clientes[rd.Next(clientes.Length)].Contas?.First();
-
-                decimal peso = rd.Next(10, 50);
-
-                if (conta == null ||
-                    conta.Saldo / peso < 1m)
-                    continue;
-
-                decimal value = conta.Saldo / peso;
-
-                await boContaPri.TransferirAsync(contaRecebe.Id, value);
-            }
-        }
-    }
-    public static async void Depositos()
-    {
-        while (true)
-        {
-            int index = rd.Next(Clientes.Length);
-            Cliente cliente = Clientes[index];
-
-            Conta? conta = cliente.Contas?.First();
-
-            if (conta == null)
-                continue;
-
-            using BoConta boConta = new(conta, cliente);
-
-            decimal valorTotal = rd.Next((int)Math.Round(2d * 50 * 0.8), 1000) * 0.8m;
-            int depositos = rd.Next(50);
-
-            for (int i = 0; i < depositos; i++)
-                _ = await boConta.DepositarAsync(valorTotal / depositos);
-
-            Thread.Sleep(rd.Next(0, 10000));
-        }
     }
 }

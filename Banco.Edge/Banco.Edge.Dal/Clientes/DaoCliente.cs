@@ -18,6 +18,22 @@ public sealed class DaoCliente : DaoBase
         return clientes.Length < 1 ? null : clientes[0];
     }
 
+    public async Task<Cliente[]?> ListarClientes(int idInicial, int maximo = 200)
+    {
+        SqlParameter[] parametros = {
+            new SqlParameter("idInicial", idInicial),
+            new SqlParameter("maximo", maximo)
+        };
+
+        DataSet dbSet = await ExecuteQueryAsync("ListarClientes", parametros, true);
+        DataRowCollection rows = dbSet.Tables[0].Rows;
+
+        DataRow[] dataRows = new DataRow[rows.Count];
+        rows.CopyTo(dataRows, 0);
+
+        return Converter(dataRows, true);
+    }
+
     public async Task ExcluirAsync(int id)
     {
         SqlParameter[] parametros = {

@@ -17,12 +17,13 @@ public class BoCliente : BoBase
     {
         get
         {
-            if (_daoCliente == null) {
+            if (_daoCliente == null)
+            {
 
                 _daoCliente = new();
                 _daoCliente.QueryExecuted += (object? sender, QueryEndEventArgs args) => { };
             }
-            
+
 
             return _daoCliente;
         }
@@ -90,7 +91,7 @@ public class BoCliente : BoBase
             throw new EmUsoException(busca.Email == cliente.Email ? nameof(cliente.Email) : nameof(cliente.CpfOuCnpj));
 
         int id = await daoCliente.InserirCliente(cliente);
-      
+
         return id;
     }
 
@@ -105,6 +106,10 @@ public class BoCliente : BoBase
 
         return cliente;
     }
+
+    public static async Task<Cliente[]?> ObterClientes(int idIncial, int maximo = 200)
+        => await daoCliente.ListarClientes(idIncial, maximo);
+
     #endregion
 
     public override void Dispose()
