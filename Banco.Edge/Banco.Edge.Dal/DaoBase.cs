@@ -20,9 +20,11 @@ public abstract class DaoBase : IDisposable
     }
     private protected async Task<DataSet> ExecuteQueryAsync(string nomeProcedure, SqlParameter[] parametros, bool transaction = false)
     {
+	SqlCommand cmd = new();
+        using SqlConnection conn = new(Resources.ConnectionString);
         int rows = 0;
         Stopwatch stopwatch = new();
-
+        cmd.Parameters.Clear();
         foreach (var item in parametros)
             cmd.Parameters.Add(item);
 
